@@ -1,0 +1,64 @@
+.modir-status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.modir-status-badge.is-active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.modir-status-badge.is-inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.modir-link-danger {
+    color: #ef4444;
+}
+
+.modir-item-row {
+    background: #fff;
+    border: 1px solid var(--modir-border, #e5e7eb);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.modir-item-row-main,
+.modir-item-row-fee,
+.modir-item-row-product {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 14px;
+}
+
+.modir-item-row label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--modir-text-light, #6b7280);
+}
+
+.modir-item-row input[type="text"],
+.modir-item-row input[type="number"] {
+    min-width: 160px;
+}
+
+.modir-item-row input[type="checkbox"] {
+    margin-inline-end: 4px;
+}
+
+.modir-item-remove {
+    margin-inline-start: auto;
+}

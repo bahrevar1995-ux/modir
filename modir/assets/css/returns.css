@@ -1,0 +1,44 @@
+.modir-returns-wrap {
+    direction: rtl;
+    text-align: right;
+}
+
+.modir-returns-table th,
+.modir-returns-table td {
+    text-align: right;
+}
+
+.modir-returns-form .form-row {
+    margin-bottom: 14px;
+}
+
+.modir-returns-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.modir-returns-form select,
+.modir-returns-form input[type="number"],
+.modir-returns-form input[type="file"],
+.modir-returns-form textarea {
+    width: 100%;
+    max-width: 460px;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.modir-return-item-option {
+    display: inline-block;
+    font-weight: 400 !important;
+    margin: 4px 0;
+}
+
+.modir-returns-form .form-row-first,
+.modir-returns-form .form-row-last {
+    display: inline-block;
+    width: 48%;
+    vertical-align: top;
+}

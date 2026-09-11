@@ -1,0 +1,97 @@
+.modir-jdp-popup {
+    z-index: 999999;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    padding: 12px;
+    width: 250px;
+    direction: rtl;
+    font-family: inherit;
+}
+
+.modir-jdp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.modir-jdp-nav {
+    background: #f3f4f6;
+    border: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #374151;
+}
+
+.modir-jdp-nav:hover {
+    background: #e5e7eb;
+}
+
+.modir-jdp-title {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.modir-jdp-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 11px;
+    color: #9ca3af;
+    margin-bottom: 4px;
+}
+
+.modir-jdp-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.modir-jdp-empty {
+    display: block;
+}
+
+.modir-jdp-day {
+    background: transparent;
+    border: none;
+    padding: 7px 0;
+    font-size: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #1f2937;
+}
+
+.modir-jdp-day:hover {
+    background: #f3f4f6;
+}
+
+.modir-jdp-day.is-today {
+    font-weight: 700;
+    color: var(--modir-primary, #2563eb);
+}
+
+.modir-jdp-day.is-selected {
+    background: var(--modir-primary, #2563eb);
+    color: #fff !important;
+}
+
+.modir-jdp-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.modir-jdp-footer button {
+    background: transparent;
+    border: none;
+    font-size: 11px;
+    color: var(--modir-primary, #2563eb);
+    cursor: pointer;
+}

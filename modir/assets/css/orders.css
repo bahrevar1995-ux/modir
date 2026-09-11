@@ -1,0 +1,114 @@
+/* ==========================================================================
+   ظاهر مینیمال صفحه سفارش‌های ووکامرس
+   فقط روی همین صفحه بارگذاری می‌شود؛ روی بقیه پیشخوان اثری ندارد.
+   ========================================================================== */
+
+.post-type-shop_order .wp-list-table,
+.woocommerce_page_wc-orders .wp-list-table {
+    border: 1px solid #eef0f4;
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+.post-type-shop_order .wp-list-table thead th,
+.woocommerce_page_wc-orders .wp-list-table thead th {
+    background: #fafbfc;
+    color: #6b7280;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.post-type-shop_order .wp-list-table tbody tr,
+.woocommerce_page_wc-orders .wp-list-table tbody tr {
+    background: #fff;
+}
+
+.post-type-shop_order .wp-list-table tbody tr:hover,
+.woocommerce_page_wc-orders .wp-list-table tbody tr:hover {
+    background: #fafaff;
+}
+
+.post-type-shop_order .wp-list-table td,
+.woocommerce_page_wc-orders .wp-list-table td {
+    vertical-align: middle;
+}
+
+.post-type-shop_order .wp-list-table td.check-column,
+.woocommerce_page_wc-orders .wp-list-table td.check-column,
+.post-type-shop_order .wp-list-table th.check-column,
+.woocommerce_page_wc-orders .wp-list-table th.check-column {
+    position: relative;
+    z-index: 2;
+}
+
+/* نشان وضعیت سفارش، هماهنگ با رنگ اصلی افزونه */
+.post-type-shop_order mark.order-status,
+.woocommerce_page_wc-orders mark.order-status {
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 11px;
+}
+
+.post-type-shop_order mark.order-status.status-completed,
+.woocommerce_page_wc-orders mark.order-status.status-completed {
+    background: color-mix(in srgb, var(--modir-primary, #2563eb) 14%, #fff);
+    color: var(--modir-primary, #2563eb);
+}
+
+/* ستون تصویر محصول */
+.modir-order-thumb-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.modir-order-thumb-wrap img {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+}
+
+.modir-order-thumb-extra {
+    position: absolute;
+    bottom: -4px;
+    left: -4px;
+    background: var(--modir-primary, #2563eb);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 999px;
+    line-height: 1.4;
+}
+
+/* ستون درگاه پرداخت */
+.modir-gateway-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f3f4f6;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    color: #374151;
+}
+
+.modir-gateway-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+/* ستون خالص پس از کارمزد */
+.modir-net-empty {
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+/* دکمه‌های اصلی صفحه سفارش‌ها با رنگ افزونه */
+.post-type-shop_order .button-primary,
+.woocommerce_page_wc-orders .button-primary {
+    background: var(--modir-primary, #2563eb) !important;
+    border-color: var(--modir-primary, #2563eb) !important;
+}

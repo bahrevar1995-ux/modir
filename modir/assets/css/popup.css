@@ -1,0 +1,188 @@
+/* ==========================================================================
+   پاپ‌آپ محصول — پنجره بازشو
+   ========================================================================== */
+
+.modir-popup-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: rgba(17, 24, 39, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    direction: rtl;
+}
+
+.modir-popup-box {
+    position: relative;
+    background: #fff;
+    width: 100%;
+    max-width: 460px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    font-family: inherit;
+}
+
+.modir-popup-close {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #f3f4f6;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    color: #374151;
+}
+
+.modir-popup-close:hover {
+    background: #e5e7eb;
+}
+
+.modir-popup-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.modir-popup-thumb img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.modir-popup-product-title {
+    margin: 0 0 4px;
+    font-size: 15px;
+}
+
+.modir-popup-product-price {
+    font-weight: 700;
+    color: var(--modir-popup-primary, #2563eb);
+}
+
+.modir-popup-group {
+    border: none;
+    padding: 0;
+    margin: 0 0 16px;
+}
+
+.modir-popup-group legend {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: #374151;
+}
+
+.modir-popup-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.modir-popup-row:hover {
+    border-color: var(--modir-popup-primary, #2563eb);
+}
+
+.modir-popup-row-locked {
+    cursor: default;
+    background: #f9fafb;
+}
+
+.modir-popup-row-locked:hover {
+    border-color: #e5e7eb;
+}
+
+.modir-popup-row-icon {
+    font-size: 13px;
+    opacity: 0.6;
+}
+
+.modir-popup-row-label {
+    flex: 1 1 auto;
+    font-size: 13px;
+}
+
+.modir-popup-row-label em {
+    font-style: normal;
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+.modir-popup-row-price {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.modir-popup-footer {
+    margin-top: 12px;
+}
+
+.modir-popup-confirm {
+    width: 100%;
+    text-align: center;
+    padding: 12px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+}
+
+/* ==========================================================================
+   ردیف‌های افزودنی در جدول سبد خرید
+   ========================================================================== */
+
+.modir-cart-addons {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.modir-cart-addon {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.modir-cart-addon-locked {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.modir-cart-addon-lock {
+    font-size: 11px;
+}
+
+.modir-cart-addon-remove {
+    color: #ef4444;
+    text-decoration: none;
+    font-weight: 700;
+    margin-inline-start: 4px;
+}
+
+.modir-cart-addon-remove:hover {
+    text-decoration: underline;
+}
+
+@media screen and (max-width: 480px) {
+    .modir-popup-box {
+        padding: 16px;
+    }
+}

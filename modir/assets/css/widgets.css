@@ -1,0 +1,201 @@
+.modir-w-wrap {
+    direction: rtl;
+    text-align: right;
+    font-family: -apple-system, "Segoe UI", Tahoma, sans-serif;
+}
+
+.modir-w-date {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.modir-w-cards {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.modir-w-card {
+    flex: 1 1 130px;
+    border-radius: 14px;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modir-w-card-indigo {
+    background: #e7e8fc;
+}
+
+.modir-w-card-peach {
+    background: linear-gradient(135deg, #ffe9d6 0%, #ffd4a3 100%);
+}
+
+.modir-w-card-label {
+    font-size: 12px;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.modir-w-card-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1f2937;
+}
+
+.modir-w-sub {
+    margin: 12px 0 0;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.modir-w-empty {
+    color: #9ca3af;
+    padding: 10px 0;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* ---------------- لیست سفارش‌های در حال انجام ---------------- */
+
+.modir-w-order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modir-w-order-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid #eef0f4;
+    border-radius: 12px;
+    padding: 8px 10px;
+    text-decoration: none;
+    direction: rtl;
+}
+
+.modir-w-order-row:hover {
+    border-color: #d8dbe6;
+    background: #fafafe;
+}
+
+.modir-w-order-thumb img {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+}
+
+.modir-w-order-info {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.modir-w-order-number {
+    font-size: 12px;
+    font-weight: 700;
+    color: #3654f4;
+}
+
+.modir-w-order-name {
+    font-size: 12px;
+    color: #374151;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.modir-w-order-price {
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #f4821f 0%, #f9a23f 100%);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+/* ---------------- لیست تعداد بر اساس وضعیت ---------------- */
+
+.modir-w-status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modir-w-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: #f9fafb;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.modir-w-status-label {
+    color: #374151;
+}
+
+.modir-w-status-count {
+    font-weight: 700;
+    color: #1f2937;
+    background: #fff;
+    border-radius: 6px;
+    padding: 2px 10px;
+    border: 1px solid #eef0f4;
+}
+
+/* ---------------- لیست آخرین مرجوعی‌ها ---------------- */
+
+.modir-w-returns-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modir-w-returns-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: #fff;
+    border: 1px solid #eef0f4;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 12px;
+    gap: 8px;
+}
+
+.modir-w-returns-row:hover {
+    background: #fafafe;
+}
+
+.modir-w-returns-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.modir-w-returns-order {
+    font-weight: 700;
+    color: #3654f4;
+}
+
+.modir-w-returns-item {
+    color: #374151;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

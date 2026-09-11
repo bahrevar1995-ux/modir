@@ -1,0 +1,77 @@
+.modir-import-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+    max-width: 700px;
+}
+
+.modir-import-form textarea {
+    font-family: monospace;
+    direction: ltr;
+    text-align: left;
+}
+
+.modir-import-form .modir-btn {
+    align-self: flex-start;
+}
+
+#modir-import-status {
+    max-width: 700px;
+}
+
+#modir-import-status .notice {
+    padding: 10px 14px;
+}
+
+.modir-import-progress {
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.modir-import-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid var(--modir-border, #e5e7eb);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
+.modir-import-row-status {
+    flex-shrink: 0;
+    min-width: 110px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-align: center;
+}
+
+.modir-import-row-pending {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.modir-import-row-success {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.modir-import-row-error {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.modir-import-row-url {
+    direction: ltr;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #374151;
+}

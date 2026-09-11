@@ -1,0 +1,192 @@
+.modir-tracking-wrap {
+    direction: rtl;
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px;
+    font-family: inherit;
+}
+
+.modir-tracking-card {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 32px 28px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+}
+
+.modir-tracking-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 24px;
+    color: #111827;
+}
+
+.modir-tracking-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modir-tracking-form input {
+    padding: 12px 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: right;
+}
+
+.modir-tracking-form input:focus {
+    outline: none;
+    border-color: #111827;
+}
+
+.modir-tracking-form button {
+    background: #111827;
+    color: #fff;
+    border: none;
+    padding: 13px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 4px;
+}
+
+.modir-tracking-form button:hover {
+    opacity: 0.9;
+}
+
+.modir-tracking-error {
+    margin-top: 16px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    text-align: center;
+}
+
+.modir-tracking-result {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px dashed #e5e7eb;
+}
+
+.modir-tracking-result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #6b7280;
+    padding: 8px 0;
+}
+
+.modir-tracking-result-row strong {
+    color: #111827;
+    font-size: 13px;
+}
+
+.modir-tracking-status {
+    background: #f3f4f6;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: 12px !important;
+}
+
+.modir-tracking-code-box {
+    margin-top: 16px;
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+.modir-tracking-code-label {
+    display: block;
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.modir-tracking-code-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.modir-tracking-code-row code {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #111827;
+    direction: ltr;
+}
+
+.modir-tracking-copy-btn {
+    background: #111827;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.modir-tracking-copy-btn.is-copied {
+    background: #15803d;
+}
+
+.modir-tracking-link {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 12px;
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.modir-tracking-note {
+    margin-top: 16px;
+    font-size: 13px;
+    color: #9ca3af;
+    text-align: center;
+}
+
+.modir-tracking-items-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    color: #111827;
+}
+
+.modir-tracking-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modir-tracking-items li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #374151;
+    background: #f9fafb;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+@media screen and (max-width: 480px) {
+    .modir-tracking-card {
+        padding: 24px 18px;
+        border-radius: 12px;
+    }
+}

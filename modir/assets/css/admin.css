@@ -1,0 +1,1924 @@
+:root {
+    --modir-primary: #16a34a;
+    --modir-primary-dark: #0f7c38;
+    --modir-accent-dark: #111827;
+    --modir-bg: #f6f7f9;
+    --modir-surface: #ffffff;
+    --modir-border: #ebecf0;
+    --modir-text: #1f2430;
+    --modir-text-light: #8891a0;
+    --modir-radius: 16px;
+    --modir-radius-sm: 10px;
+}
+
+.modir-wrap {
+    direction: rtl;
+    text-align: right;
+    color: var(--modir-text);
+    font-size: 13px;
+    background: var(--modir-bg);
+    padding: 16px;
+    border-radius: var(--modir-radius);
+}
+
+body.modir-dark-mode #wpcontent {
+    background: #0f1115;
+}
+
+.modir-wrap .wp-heading-inline,
+.modir-title {
+    font-weight: 700;
+    font-size: 21px;
+    margin: 4px 0 18px;
+    letter-spacing: -0.2px;
+}
+
+.modir-subtitle {
+    font-weight: 700;
+    margin: 34px 0 14px;
+    font-size: 14px;
+    color: var(--modir-text);
+}
+
+/* ---------------- هدر صفحه به‌سبک آیکون‌دار (اختیاری، برای صفحات اصلی) ---------------- */
+
+.modir-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid var(--modir-border);
+    border-radius: var(--modir-radius);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+}
+
+.modir-page-header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.modir-page-header-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--modir-primary) 85%, #22c55e), var(--modir-primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.modir-page-header-title {
+    font-weight: 700;
+    font-size: 16px;
+    margin: 0 0 2px;
+}
+
+.modir-page-header-subtitle {
+    font-size: 12px;
+    color: var(--modir-text-light);
+    margin: 0;
+}
+
+/* ---------------- بکس هشدار/اطلاع‌رسانی نرم ---------------- */
+
+.modir-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+    border-radius: var(--modir-radius-sm);
+    padding: 12px 16px;
+    font-size: 12.5px;
+    margin: 16px 0;
+}
+
+/* ---------------- نوار تب سطح‌بالا (بین ماژول‌ها) — سبک و کم‌رنگ‌تر ---------------- */
+
+.modir-tabs-nav-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 22px;
+}
+
+.modir-tabs-nav-arrow {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--modir-border);
+    background: var(--modir-surface);
+    color: var(--modir-text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.modir-tabs-nav-arrow:hover {
+    background: var(--modir-bg);
+    color: var(--modir-text);
+}
+
+.modir-tabs-nav-arrow .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.modir-scroll-rail {
+    border-bottom: none !important;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 4px;
+    background: #eef0f4;
+    padding: 5px;
+    border-radius: 999px;
+    max-width: 100%;
+    scroll-behavior: smooth;
+    flex: 1;
+}
+
+.modir-scroll-rail::-webkit-scrollbar {
+    display: none;
+}
+
+.modir-scroll-rail .nav-tab {
+    border: none !important;
+    background: transparent !important;
+    margin: 0 !important;
+    padding: 8px 18px !important;
+    font-size: 12px !important;
+    font-weight: 500;
+    border-radius: 999px !important;
+    color: var(--modir-text-light) !important;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.modir-tabs-main .nav-tab {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    padding: 11px 22px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+}
+
+.modir-tabs-main .nav-tab .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.modir-nav-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    margin-inline-start: 2px;
+}
+
+.modir-scroll-rail .nav-tab-active,
+.modir-scroll-rail .nav-tab:hover {
+    background: #fff !important;
+    color: var(--modir-text) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+}
+
+/* ---------------- نوار تب داخلی ماژول (زیرمجموعه‌های همان صفحه) ---------------- */
+
+.modir-tabs:not(.modir-scroll-rail) {
+    border-bottom: 1px solid var(--modir-border);
+    margin-bottom: 0;
+}
+
+.modir-tabs:not(.modir-scroll-rail) .nav-tab {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--modir-text-light);
+    padding: 10px 4px;
+    margin-inline-end: 22px;
+    border-bottom: 2px solid transparent;
+}
+
+.modir-tabs:not(.modir-scroll-rail) .nav-tab-active {
+    color: var(--modir-primary);
+    border-bottom-color: var(--modir-primary);
+    background: transparent;
+}
+
+.modir-tab-panel {
+    background: #fff;
+    border: 1px solid var(--modir-border);
+    border-top: none;
+    border-radius: 0 0 var(--modir-radius) var(--modir-radius);
+    padding: 28px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+}
+
+.modir-filter-form {
+    background: #fbfbfd;
+    border: 1px solid var(--modir-border);
+    border-radius: var(--modir-radius-sm);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+}
+
+.modir-filter-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.modir-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modir-filter-field label {
+    font-size: 11.5px;
+    color: var(--modir-text-light);
+    font-weight: 500;
+}
+
+.modir-filter-field input[type="date"],
+.modir-filter-field select {
+    border: 1px solid var(--modir-border);
+    border-radius: 8px;
+    padding: 7px 10px;
+    min-width: 160px;
+    background: #fff;
+}
+
+.modir-wrap .button-primary,
+.modir-btn,
+.modir-filter-submit .button-primary {
+    background: color-mix(in srgb, var(--modir-primary) 82%, transparent) !important;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    border: 1px solid color-mix(in srgb, #fff 30%, transparent) !important;
+    box-shadow: 0 2px 10px color-mix(in srgb, var(--modir-primary) 30%, transparent) !important;
+    text-shadow: none !important;
+    border-radius: 999px !important;
+    font-weight: 500 !important;
+    padding: 4px 20px !important;
+    height: auto !important;
+    color: #fff !important;
+}
+
+.modir-wrap .button-primary:hover,
+.modir-btn:hover {
+    background: color-mix(in srgb, var(--modir-primary) 95%, transparent) !important;
+    border-color: color-mix(in srgb, #fff 40%, transparent) !important;
+}
+
+.modir-wrap .button:not(.button-primary),
+.modir-wrap input[type="submit"]:not(.button-primary),
+.modir-tab-panel .button:not(.modir-btn):not(.button-primary) {
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    padding: 4px 18px !important;
+    height: auto !important;
+    border-color: var(--modir-border) !important;
+    background: var(--modir-surface, #fff) !important;
+    color: var(--modir-text) !important;
+}
+
+.modir-wrap .button:not(.button-primary):hover {
+    background: var(--modir-bg) !important;
+    border-color: var(--modir-text-light) !important;
+}
+
+.modir-wrap button:not([class]) {
+    border-radius: 999px;
+}
+
+.modir-tab-panel .button:not(.modir-btn):not(.button-primary) {
+    border-radius: 999px !important;
+}
+
+.modir-summary-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 30px;
+}
+
+.modir-card {
+    background: #fbfbfd;
+    border: 1px solid var(--modir-border);
+    border-radius: var(--modir-radius-sm);
+    padding: 18px 20px;
+    min-width: 180px;
+    flex: 1 1 180px;
+    position: relative;
+}
+
+.modir-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 34px;
+    height: 3px;
+    border-radius: 0 0 0 3px;
+    background: var(--modir-primary);
+}
+
+.modir-card-danger::before {
+    background: #ef4444;
+}
+
+.modir-card-success::before {
+    background: #16a34a;
+}
+
+.modir-card-label {
+    display: block;
+    font-size: 11.5px;
+    color: var(--modir-text-light);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.modir-card-value {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.modir-table {
+    border-radius: var(--modir-radius);
+    overflow: hidden;
+    border: 1px solid var(--modir-border) !important;
+}
+
+.modir-table th {
+    background: var(--modir-bg);
+}
+
+.modir-empty {
+    background: #fff;
+    border: 1px dashed var(--modir-border);
+    padding: 24px;
+    text-align: center;
+    border-radius: var(--modir-radius);
+    color: var(--modir-text-light);
+}
+
+.modir-settings-form .modir-color-picker {
+    max-width: 120px;
+}
+
+.modir-jalali-date-input {
+    min-width: 130px !important;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.modir-product-table {
+    border: 1px solid var(--modir-border);
+    border-radius: 12px;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.modir-product-table thead th {
+    background: #fafbfc;
+    color: var(--modir-text-light);
+    font-weight: 600;
+    font-size: 12px;
+    border-bottom: 1px solid var(--modir-border);
+    padding: 14px 16px;
+    letter-spacing: 0.2px;
+}
+
+.modir-product-table tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.12s ease;
+}
+
+.modir-product-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.modir-product-table tbody tr:hover {
+    background: #fafaff;
+}
+
+.modir-product-table td {
+    padding: 16px;
+    vertical-align: middle;
+    line-height: 1.9;
+}
+
+.modir-product-table tfoot td,
+.modir-product-table tfoot th {
+    padding: 14px 16px;
+    background: #fafbfc;
+    border-top: 1px solid var(--modir-border);
+}
+
+.modir-product-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modir-product-thumb img {
+    width: 42px;
+    height: 42px;
+    object-fit: cover;
+    border-radius: 9px;
+    display: block;
+    border: 1px solid var(--modir-border);
+}
+
+.modir-product-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--modir-text);
+}
+
+.modir-qty-pill {
+    display: inline-block;
+    background: color-mix(in srgb, var(--modir-primary) 12%, #fff);
+    color: var(--modir-primary);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 14px;
+    border-radius: 999px;
+}
+
+.modir-gateway-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.modir-gateway-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 999px;
+    padding: 4px 6px 4px 12px;
+    font-size: 11.5px;
+}
+
+.modir-gateway-chip-name {
+    color: #374151;
+}
+
+.modir-gateway-chip-qty {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 999px;
+    padding: 1px 9px;
+    font-weight: 700;
+    color: var(--modir-primary);
+    font-size: 11px;
+}
+
+.modir-text-muted {
+    color: var(--modir-text-light);
+    font-size: 12px;
+}
+
+.modir-pl-history {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.modir-pl-history-item {
+    display: inline-block;
+    background: #f3f4f6;
+    color: #374151;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.modir-pl-history-item:hover {
+    background: #e5e7eb;
+}
+
+.modir-pl-history-item.is-current {
+    background: var(--modir-primary);
+    color: #fff;
+}
+
+.modir-alert-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.modir-alert-badge.is-notice {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.modir-alert-badge.is-warning {
+    background: #fed7aa;
+    color: #9a3412;
+}
+
+.modir-alert-badge.is-serious {
+    background: #fecaca;
+    color: #991b1b;
+}
+
+.modir-alert-badge.is-critical {
+    background: #dc2626;
+    color: #fff;
+}
+
+.modir-products-grid .modir-grid-input {
+    width: 100%;
+    border: 1.5px solid transparent;
+    background: transparent;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    box-sizing: border-box;
+}
+
+.modir-products-grid .modir-grid-input-title {
+    font-weight: 500;
+}
+
+.modir-products-grid .modir-grid-input:hover {
+    border-color: var(--modir-border);
+    background: #fafbfc;
+}
+
+.modir-products-grid .modir-grid-input:focus {
+    border-color: var(--modir-primary);
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--modir-primary) 15%, transparent);
+}
+
+.modir-products-grid .modir-grid-input:disabled {
+    opacity: 0.5;
+}
+
+.modir-grid-status {
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.modir-grid-status.is-success {
+    color: #16a34a;
+}
+
+.modir-grid-status.is-error {
+    color: #dc2626;
+}
+
+.modir-products-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 16px;
+}
+
+.modir-page-btn {
+    background: #f3f4f6;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #374151;
+}
+
+.modir-page-btn:hover {
+    background: #e5e7eb;
+}
+
+.modir-page-btn.is-active {
+    background: var(--modir-primary);
+    color: #fff;
+}
+
+.modir-jalali-range {
+    font-size: 12px;
+    color: var(--modir-text-light);
+    margin: -12px 0 20px;
+}
+
+.modir-status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.modir-status-badge.is-active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.modir-status-badge.is-inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.modir-link-danger {
+    color: #ef4444;
+}
+
+.modir-status-sample {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.modir-license-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: rgba(15, 23, 42, 0.62);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modir-license-modal {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 40px 32px 32px;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    animation: modir-license-pop 0.25s ease;
+}
+
+@keyframes modir-license-pop {
+    from { opacity: 0; transform: scale(0.94) translateY(6px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modir-license-modal-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--modir-primary, #2563eb), color-mix(in srgb, var(--modir-primary, #2563eb) 40%, #fff));
+}
+
+.modir-license-icon-wrap {
+    width: 64px;
+    height: 64px;
+    margin: 4px auto 18px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--modir-primary, #2563eb) 12%, #fff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modir-license-icon {
+    font-size: 28px;
+}
+
+.modir-license-modal h1 {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 10px;
+    color: #111827;
+}
+
+.modir-license-modal p {
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.9;
+    margin: 0 0 22px;
+}
+
+.modir-license-error-msg {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    font-size: 12px;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 16px;
+}
+
+.modir-license-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modir-license-input {
+    text-align: center;
+    font-size: 16px;
+    letter-spacing: 2px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1.5px solid var(--modir-border, #e5e7eb);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modir-license-input:focus {
+    border-color: var(--modir-primary, #2563eb);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--modir-primary, #2563eb) 15%, transparent);
+}
+
+.modir-license-submit.modir-btn {
+    width: 100%;
+    padding: 12px !important;
+    font-size: 14px !important;
+    border-radius: 10px !important;
+}
+
+.modir-commission-table {
+    border-collapse: collapse;
+    max-width: 600px;
+}
+
+.modir-commission-table th,
+.modir-commission-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--modir-border);
+    text-align: right;
+    font-size: 13px;
+}
+
+.modir-commission-table thead th {
+    color: var(--modir-text-light);
+    font-weight: 600;
+}
+
+.modir-status-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px 16px;
+    max-width: 900px;
+}
+
+.modir-status-checkbox-grid label {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.modir-badge-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.modir-badge-approved {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.modir-badge-rejected {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.modir-badge-completed {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.modir-return-action-link {
+    display: inline-block;
+    font-size: 11px;
+    margin-inline-end: 6px;
+    text-decoration: none;
+    background: #f3f4f6;
+    padding: 3px 8px;
+    border-radius: 10px;
+    color: #374151;
+}
+
+.modir-return-action-link:hover {
+    background: #e5e7eb;
+}
+
+.modir-menu-check-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 700px;
+    margin-bottom: 20px;
+}
+
+.modir-menu-check-group {
+    border: 1px solid var(--modir-border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    background: #fff;
+}
+
+.modir-menu-check-parent {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.modir-menu-check-children {
+    margin: 8px 0 0 0;
+    padding-inline-start: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-inline-start: 2px solid var(--modir-border);
+}
+
+.modir-menu-check-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--modir-text-light);
+    cursor: pointer;
+    padding-inline-start: 10px;
+}
+
+/* ---------------- تب‌ها ---------------- */
+
+.modir-tabs {
+    margin-bottom: 0;
+}
+
+.modir-tabs .nav-tab-active {
+    border-bottom-color: var(--modir-primary);
+    color: var(--modir-primary);
+}
+
+.modir-tab-panel {
+    background: #fff;
+    border: 1px solid var(--modir-border);
+    border-top: none;
+    border-radius: 0 0 var(--modir-radius) var(--modir-radius);
+    padding: 24px;
+}
+
+.modir-tab-panel .modir-filter-form {
+    border: none;
+    padding: 0 0 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px dashed var(--modir-border);
+    border-radius: 0;
+}
+
+/* ---------------- نوار نوتیف: فرم تنظیمات ---------------- */
+
+.modir-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.modir-style-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    max-width: 780px;
+}
+
+.modir-style-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border: 1.5px solid var(--modir-border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.modir-style-card:hover {
+    border-color: var(--modir-primary);
+}
+
+.modir-style-card.is-selected {
+    border-color: var(--modir-primary);
+    background: color-mix(in srgb, var(--modir-primary) 6%, #fff);
+}
+
+.modir-style-card input[type="radio"] {
+    margin-inline-end: 6px;
+}
+
+.modir-style-name {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.modir-style-desc {
+    font-size: 12px;
+    color: var(--modir-text-light);
+}
+
+.modir-color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    max-width: 700px;
+}
+
+.modir-color-grid label,
+.modir-inline-fields label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--modir-text-light);
+}
+
+.modir-inline-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.modir-inline-fields input[type="text"],
+.modir-inline-fields input[type="url"] {
+    min-width: 260px;
+}
+
+.modir-notif-image-preview {
+    display: inline-block;
+    vertical-align: middle;
+    margin-inline-end: 10px;
+}
+
+.modir-notif-image-preview img {
+    max-height: 60px;
+    border-radius: 6px;
+    display: block;
+}
+
+/* ==========================================================================
+   کامپوننت‌های نوار ابزار و جدول اکسلی (صفحه محصولات)
+   ========================================================================== */
+
+.modir-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid var(--modir-border);
+    border-radius: var(--modir-radius-sm);
+    padding: 10px 14px;
+    margin-bottom: 16px;
+}
+
+.modir-toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modir-toolbar-sep {
+    width: 1px;
+    height: 24px;
+    background: var(--modir-border);
+}
+
+.modir-pill-select {
+    border: 1px solid var(--modir-border) !important;
+    border-radius: 999px !important;
+    padding: 6px 14px !important;
+    font-size: 12px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+}
+
+.modir-view-toggle {
+    display: inline-flex;
+    background: #f3f4f6;
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+}
+
+.modir-view-toggle button {
+    border: none;
+    background: transparent;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--modir-text-light);
+}
+
+.modir-view-toggle button.is-active {
+    background: #111827;
+    color: #fff;
+}
+
+.modir-search-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: var(--modir-primary);
+    border: none;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.modir-toolbar input[type="search"],
+.modir-toolbar input[type="text"].modir-search-input {
+    border: 1px solid var(--modir-border);
+    border-radius: 999px;
+    padding: 7px 16px;
+    font-size: 12px;
+    min-width: 220px;
+}
+
+/* سوییچ روشن/خاموش به‌سبک iOS */
+
+.modir-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.modir-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.modir-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #d1d5db;
+    border-radius: 999px;
+    transition: 0.2s;
+}
+
+.modir-switch-slider::before {
+    content: '';
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    right: 3px;
+    bottom: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.modir-switch input:checked + .modir-switch-slider {
+    background: var(--modir-primary);
+}
+
+.modir-switch input:checked + .modir-switch-slider::before {
+    transform: translateX(-18px);
+}
+
+/* بج‌های وضعیت/سود و چیپ‌لینک‌ها */
+
+.modir-stat-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.modir-stat-badge.is-good {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.modir-stat-badge.is-bad {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.modir-stat-badge.is-neutral {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.modir-bulk-stage-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--modir-surface, #fff);
+    border: 1px solid var(--modir-border);
+    border-radius: var(--modir-radius-sm);
+    padding: 14px 18px;
+    margin-bottom: 16px;
+}
+
+.modir-bulk-stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modir-bulk-stage-label {
+    font-size: 11px;
+    color: var(--modir-text-light);
+}
+
+.modir-bulk-stage select,
+.modir-bulk-stage input {
+    width: 100%;
+}
+
+.modir-bulk-stage-arrow {
+    color: var(--modir-text-light);
+    flex-shrink: 0;
+    margin-top: 16px;
+}
+
+.modir-variation-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 2px;
+    color: var(--modir-text-light);
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.modir-variation-toggle .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+span.modir-variation-toggle {
+    cursor: pointer;
+}
+
+.modir-variation-row {
+    background: var(--modir-bg) !important;
+}
+
+.modir-variation-row:hover {
+    background: var(--modir-bg) !important;
+}
+
+.modir-variation-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-inline-start: 22px;
+    font-size: 11.5px;
+    color: var(--modir-text-light);
+}
+
+.modir-variation-branch-icon {
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    color: var(--modir-border);
+}
+
+.modir-amount-positive {
+    font-weight: 700;
+    color: #15803d;
+}
+
+.modir-amount-negative {
+    font-weight: 700;
+    color: #b91c1c;
+}
+
+body.modir-dark-mode .modir-amount-positive {
+    color: #4ade80;
+}
+
+body.modir-dark-mode .modir-amount-negative {
+    color: #f87171;
+}
+
+.modir-stock-accordion {
+    position: relative;
+    display: inline-block;
+}
+
+.modir-stock-accordion-toggle {
+    cursor: pointer;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+}
+
+.modir-stock-accordion-toggle .dashicons {
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    transition: transform 0.15s ease;
+}
+
+.modir-stock-accordion.is-open .modir-stock-accordion-toggle .dashicons {
+    transform: rotate(180deg);
+}
+
+.modir-stock-accordion-options {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    background: var(--modir-surface, #fff);
+    border: 1px solid var(--modir-border);
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 4px;
+    z-index: 20;
+    min-width: 90px;
+}
+
+.modir-stock-accordion.is-open .modir-stock-accordion-options {
+    display: block;
+}
+
+.modir-stock-option {
+    display: block;
+    width: 100%;
+    text-align: right;
+    border: none;
+    background: transparent;
+    padding: 6px 10px;
+    border-radius: 7px;
+    font-size: 11.5px;
+    cursor: pointer;
+}
+
+.modir-stock-option.is-good {
+    color: #15803d;
+}
+
+.modir-stock-option.is-bad {
+    color: #b91c1c;
+}
+
+.modir-stock-option:hover {
+    background: var(--modir-bg);
+}
+
+.modir-chart-wrap {
+    background: var(--modir-surface, #fff);
+    border: 1px solid var(--modir-border);
+    border-radius: var(--modir-radius);
+    padding: 12px;
+    position: relative;
+}
+
+.modir-chart-tooltip {
+    position: absolute;
+    background: var(--modir-accent-dark, #111827);
+    color: #fff;
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 5;
+}
+
+.modir-chart-tooltip span {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+#modir-dash-chart {
+    width: 100%;
+    height: 220px;
+    display: block;
+}
+
+.modir-icon-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1px solid var(--modir-border);
+    color: var(--modir-text-light);
+    text-decoration: none;
+    background: var(--modir-surface, #fff);
+}
+
+.modir-icon-link:hover {
+    background: var(--modir-bg);
+    color: var(--modir-primary);
+    border-color: var(--modir-primary);
+}
+
+.modir-icon-link .dashicons {
+    font-size: 13px;
+    width: 13px;
+    height: 13px;
+}
+
+.modir-product-icon-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.modir-product-cell-wide {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modir-product-cell-wide .modir-grid-input-title {
+    flex: 1;
+    min-width: 160px;
+}
+
+.modir-grid-mini-input {
+    width: 100%;
+    max-width: 110px;
+    border: 1px solid var(--modir-border);
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 12px;
+    box-sizing: border-box;
+}
+
+.modir-grid-mini-input:focus {
+    border-color: var(--modir-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--modir-primary) 15%, transparent);
+}
+
+.modir-products-grid td {
+    vertical-align: middle;
+    padding: 3px 8px !important;
+    line-height: 1.2 !important;
+}
+
+.modir-products-grid img {
+    width: 22px !important;
+    height: 22px !important;
+    object-fit: cover;
+    border-radius: 5px;
+    display: block;
+}
+
+.modir-products-grid .modir-grid-input {
+    padding: 3px 6px;
+    font-size: 12px;
+}
+
+.modir-products-grid .modir-product-cell {
+    min-width: 220px;
+    width: 100%;
+}
+
+/* ==========================================================================
+   هدر یکپارچه بالای صفحه (طرح ۵) — رنگ تاکیدی پررنگ، آیکون مربعی، کنترل‌های
+   انتخاب رنگ و حالت روشن/تیره
+   ========================================================================== */
+
+.modir-top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: color-mix(in srgb, var(--modir-primary) 80%, #000 20%);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid color-mix(in srgb, #fff 12%, transparent);
+    border-radius: var(--modir-radius);
+    padding: 18px 22px;
+    margin-bottom: 20px;
+}
+
+.modir-top-header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.modir-top-header-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    background: var(--modir-primary);
+    border: 1px solid color-mix(in srgb, #fff 25%, transparent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+}
+
+.modir-top-header-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0 0 2px;
+    color: #fff;
+}
+
+.modir-top-header-subtitle {
+    font-size: 12px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.modir-top-header-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modir-color-swatch-wrap {
+    position: relative;
+}
+
+.modir-color-swatch-btn,
+.modir-theme-toggle-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.12);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modir-color-swatch-btn:hover,
+.modir-theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modir-color-swatch-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    display: block;
+}
+
+.modir-color-swatch-popup {
+    display: none;
+    position: absolute;
+    top: 44px;
+    left: 0;
+    background: var(--modir-surface, #fff);
+    border: 1px solid var(--modir-border);
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    z-index: 999;
+    width: 190px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.modir-color-swatch-popup.is-open {
+    display: flex;
+}
+
+.modir-color-preset {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.modir-color-preset:hover {
+    border-color: var(--modir-text-light);
+}
+
+.modir-color-custom-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--modir-text-light);
+    width: 100%;
+    margin-top: 6px;
+    cursor: pointer;
+}
+
+.modir-color-custom-label input[type="color"] {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.modir-fullscreen-icon-on {
+    display: none;
+}
+
+body.modir-fullscreen-mode .modir-fullscreen-icon-off {
+    display: none;
+}
+
+body.modir-fullscreen-mode .modir-fullscreen-icon-on {
+    display: inline-block;
+}
+
+body.modir-fullscreen-mode #wpadminbar,
+body.modir-fullscreen-mode #adminmenumain,
+body.modir-fullscreen-mode #adminmenuback,
+body.modir-fullscreen-mode #adminmenuwrap,
+body.modir-fullscreen-mode #wpfooter {
+    display: none !important;
+}
+
+body.modir-fullscreen-mode.wp-toolbar {
+    padding-top: 0 !important;
+}
+
+body.modir-fullscreen-mode #wpcontent,
+body.modir-fullscreen-mode #wpbody-content {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.modir-theme-icon-dark {
+    display: none;
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+}
+
+body.modir-dark-mode .modir-theme-icon-light {
+    display: none;
+}
+
+body.modir-dark-mode .modir-theme-icon-dark {
+    display: inline-flex;
+}
+
+/* ==========================================================================
+   حالت تیره — پوشش اجزای اصلی مشترک در کل افزونه
+   ========================================================================== */
+
+body.modir-dark-mode {
+    --modir-bg: #15171c;
+    --modir-border: #2a2d35;
+    --modir-text: #e5e7eb;
+    --modir-text-light: #9ca3af;
+    --modir-surface: #1c1f26;
+}
+
+body.modir-dark-mode .modir-wrap {
+    color: var(--modir-text);
+}
+
+body.modir-dark-mode .modir-tab-panel,
+body.modir-dark-mode .modir-card,
+body.modir-dark-mode .modir-filter-form,
+body.modir-dark-mode .modir-page-header,
+body.modir-dark-mode .modir-toolbar,
+body.modir-dark-mode table.widefat,
+body.modir-dark-mode .modir-product-table,
+body.modir-dark-mode .modir-license-modal,
+body.modir-dark-mode .modir-tracking-card {
+    background: var(--modir-surface);
+    border-color: var(--modir-border);
+    color: var(--modir-text);
+}
+
+body.modir-dark-mode table.widefat thead th,
+body.modir-dark-mode .modir-product-table thead th {
+    background: #21242c;
+    color: var(--modir-text-light);
+    border-color: var(--modir-border);
+}
+
+body.modir-dark-mode table.widefat tbody tr,
+body.modir-dark-mode .modir-product-table tbody tr {
+    border-color: var(--modir-border);
+}
+
+body.modir-dark-mode table.widefat tbody tr:hover,
+body.modir-dark-mode .modir-product-row:hover {
+    background: #21242c;
+}
+
+body.modir-dark-mode input[type="text"],
+body.modir-dark-mode input[type="number"],
+body.modir-dark-mode input[type="email"],
+body.modir-dark-mode input[type="url"],
+body.modir-dark-mode input[type="password"],
+body.modir-dark-mode input[type="search"],
+body.modir-dark-mode select,
+body.modir-dark-mode textarea {
+    background: #12141a !important;
+    border-color: var(--modir-border) !important;
+    color: var(--modir-text) !important;
+}
+
+body.modir-dark-mode .modir-grid-input:hover {
+    background: #21242c;
+}
+
+body.modir-dark-mode .modir-grid-input:focus {
+    background: #12141a;
+}
+
+body.modir-dark-mode .modir-scroll-rail {
+    background: #21242c;
+}
+
+body.modir-dark-mode .modir-scroll-rail .nav-tab-active,
+body.modir-dark-mode .modir-scroll-rail .nav-tab:hover {
+    background: #2f333d !important;
+    color: #fff !important;
+}
+
+body.modir-dark-mode .modir-view-toggle,
+body.modir-dark-mode .modir-page-btn,
+body.modir-dark-mode .modir-pill-select {
+    background: #21242c;
+    color: var(--modir-text-light);
+}
+
+body.modir-dark-mode .modir-text-muted {
+    color: var(--modir-text-light);
+}
+
+body.modir-dark-mode .modir-empty {
+    color: var(--modir-text-light);
+}
+
+body.modir-dark-mode .modir-color-swatch-popup {
+    background: var(--modir-surface);
+    border-color: var(--modir-border);
+}
+
+body.modir-dark-mode .modir-gateway-chip-name,
+body.modir-dark-mode .modir-pl-history-item,
+body.modir-dark-mode .modir-page-btn,
+body.modir-dark-mode .modir-return-action-link,
+body.modir-dark-mode .modir-license-modal h1 {
+    color: var(--modir-text);
+}
+
+body.modir-dark-mode .modir-gateway-chip,
+body.modir-dark-mode .modir-pl-history-item,
+body.modir-dark-mode .modir-page-btn,
+body.modir-dark-mode .modir-return-action-link {
+    background: #21242c;
+}
+
+body.modir-dark-mode .modir-pl-history-item.is-current {
+    background: var(--modir-primary);
+    color: #fff;
+}
+
+body.modir-dark-mode .modir-stat-badge.is-neutral {
+    background: #21242c;
+    color: var(--modir-text-light);
+}
+
+body.modir-dark-mode .modir-chip-link,
+body.modir-dark-mode .modir-icon-link {
+    background: #21242c;
+    border-color: var(--modir-border);
+    color: var(--modir-text-light);
+}
+
+body.modir-dark-mode .modir-toolbar-group label,
+body.modir-dark-mode .modir-bulk-stage-label,
+body.modir-dark-mode label {
+    color: var(--modir-text-light);
+}
+
+/* ==========================================================================
+   داشبورد خوش‌آمد
+   ========================================================================== */
+
+.modir-welcome-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--modir-primary) 10%, #fff), color-mix(in srgb, var(--modir-primary) 4%, #fff));
+    border: 1px solid var(--modir-border);
+    border-radius: var(--modir-radius);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+}
+
+.modir-today-sales-hero {
+    display: block;
+}
+
+.modir-today-sales-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.modir-today-sales-title {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--modir-primary-dark, var(--modir-primary));
+}
+
+.modir-today-sales-subtitle {
+    margin: 0;
+    font-size: 12px;
+    color: var(--modir-text-light);
+}
+
+.modir-today-sales-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modir-today-sales-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--modir-surface, #fff);
+    border-radius: 10px;
+    padding: 8px 12px;
+}
+
+.modir-today-sales-item img {
+    border-radius: 6px;
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+}
+
+.modir-today-sales-name {
+    flex: 1;
+    font-size: 12.5px;
+}
+
+.modir-today-sales-qty {
+    font-size: 12px;
+    color: var(--modir-text-light);
+    font-weight: 500;
+}
+
+.modir-welcome-text h2 {
+    margin: 0 0 10px;
+    font-size: 19px;
+    color: var(--modir-primary-dark, var(--modir-primary));
+}
+
+.modir-welcome-text p {
+    margin: 0 0 16px;
+    font-size: 13px;
+    color: var(--modir-text-light);
+    max-width: 480px;
+}
+
+.modir-welcome-illustration {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--modir-primary) 15%, #fff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.modir-welcome-illustration .dashicons {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: var(--modir-primary);
+}
+
+.modir-quick-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.modir-quick-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: var(--modir-surface, #fff);
+    border: 1px solid var(--modir-border);
+    border-radius: var(--modir-radius-sm);
+    padding: 20px 10px;
+    text-decoration: none;
+    color: var(--modir-text);
+    font-size: 12.5px;
+    font-weight: 500;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.modir-quick-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    color: var(--modir-text);
+}
+
+.modir-icon-badge {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modir-icon-badge .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.modir-icon-badge.is-yellow { background: #fef3c7; color: #b45309; }
+.modir-icon-badge.is-green { background: #dcfce7; color: #15803d; }
+.modir-icon-badge.is-blue { background: #dbeafe; color: #1d4ed8; }
+.modir-icon-badge.is-purple { background: #ede9fe; color: #6d28d9; }
+
+body.modir-dark-mode .modir-welcome-hero {
+    background: color-mix(in srgb, var(--modir-primary) 10%, var(--modir-surface));
+}
+
+body.modir-dark-mode .modir-icon-badge.is-yellow { background: #423114; color: #fbbf24; }
+body.modir-dark-mode .modir-icon-badge.is-green { background: #0f2e1c; color: #4ade80; }
+body.modir-dark-mode .modir-icon-badge.is-blue { background: #10233d; color: #60a5fa; }
+body.modir-dark-mode .modir-icon-badge.is-purple { background: #271140; color: #a78bfa; }

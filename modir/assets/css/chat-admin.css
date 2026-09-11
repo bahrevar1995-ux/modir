@@ -1,0 +1,15 @@
+.modir-chat-entry-row .modir-item-row-main label {
+    width: 100%;
+}
+
+#modir-chat-test-result {
+    font-size: 13px;
+}
+
+#modir-chat-test-result.is-success {
+    color: #15803d;
+}
+
+#modir-chat-test-result.is-error {
+    color: #b91c1c;
+}
