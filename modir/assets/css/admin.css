@@ -1922,3 +1922,281 @@ body.modir-dark-mode .modir-icon-badge.is-yellow { background: #423114; color: #
 body.modir-dark-mode .modir-icon-badge.is-green { background: #0f2e1c; color: #4ade80; }
 body.modir-dark-mode .modir-icon-badge.is-blue { background: #10233d; color: #60a5fa; }
 body.modir-dark-mode .modir-icon-badge.is-purple { background: #271140; color: #a78bfa; }
+
+/* ==========================================================================
+   داشبورد کارمحور (طرح جدید): سوییچ نقش + کارهای امروز + سفارشات در انتظار
+   ========================================================================== */
+
+.modir-role-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: var(--modir-bg, #f0f2f5);
+    border-radius: 999px;
+    padding: 4px;
+    margin-bottom: 18px;
+}
+
+.modir-role-switch button {
+    border: 0;
+    background: transparent;
+    color: var(--modir-text-light);
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.modir-role-switch button.is-active {
+    background: var(--modir-primary);
+    color: #fff;
+}
+
+.modir-dash-grid {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.modir-dash-main {
+    flex: 2;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modir-dash-side {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modir-task-card {
+    background: var(--modir-surface, #fff);
+    border: 1px solid var(--modir-border);
+    border-radius: var(--modir-radius);
+    padding: 18px 20px;
+}
+
+.modir-task-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14.5px;
+    font-weight: 700;
+}
+
+.modir-task-progress {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--modir-text-light);
+}
+
+.modir-task-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.modir-task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 2px;
+    border-bottom: 1px solid var(--modir-border-light, #f5f5f5);
+}
+
+.modir-task-item:last-child {
+    border-bottom: none;
+}
+
+.modir-task-check {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid #d0d5da;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.modir-task-check .dashicons {
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    color: #fff;
+    display: none;
+}
+
+.modir-task-item.is-done .modir-task-check {
+    background: var(--modir-primary);
+    border-color: var(--modir-primary);
+}
+
+.modir-task-item.is-done .modir-task-check .dashicons {
+    display: block;
+}
+
+.modir-task-text {
+    flex: 1;
+    font-size: 13.5px;
+    color: var(--modir-text);
+    text-decoration: none;
+}
+
+.modir-task-item.is-done .modir-task-text {
+    color: var(--modir-text-light);
+    text-decoration: line-through;
+}
+
+.modir-task-flag {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 4px 11px;
+    background: #f0f2f5;
+    color: #646970;
+}
+
+.modir-task-flag.is-urgent { background: #fee2e2; color: #dc2626; }
+.modir-task-flag.is-warn   { background: #fef3c7; color: #b45309; }
+.modir-task-flag.is-new    { background: #dbeafe; color: #2563eb; }
+
+.modir-pending-orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.modir-pending-order-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 2px;
+    border-bottom: 1px solid var(--modir-border-light, #f5f5f5);
+    text-decoration: none;
+    color: inherit;
+}
+
+.modir-pending-order-row:last-child {
+    border-bottom: none;
+}
+
+.modir-po-num {
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.modir-po-meta {
+    flex: 1;
+    font-size: 12.5px;
+    color: var(--modir-text-light);
+}
+
+.modir-po-badge {
+    flex-shrink: 0;
+    font-size: 11.5px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 4px 12px;
+}
+
+.modir-side-card {
+    background: var(--modir-surface, #fff);
+    border: 1px solid var(--modir-border);
+    border-radius: var(--modir-radius);
+    padding: 18px 20px;
+}
+
+.modir-side-card-primary {
+    background: var(--modir-primary);
+    border-color: var(--modir-primary);
+    color: #fff;
+}
+
+.modir-side-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    opacity: 0.85;
+    margin-bottom: 8px;
+}
+
+.modir-side-card:not(.modir-side-card-primary) .modir-side-label {
+    color: var(--modir-text-light);
+    opacity: 1;
+}
+
+.modir-side-value {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.modir-side-foot {
+    font-size: 11.5px;
+    opacity: 0.85;
+    margin-top: 8px;
+}
+
+.modir-side-sub {
+    font-size: 12px;
+    color: var(--modir-text-light);
+    margin-bottom: 10px;
+}
+
+.modir-side-big {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.modir-side-big.is-danger {
+    color: #dc2626;
+}
+
+.modir-side-shortcuts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modir-side-shortcuts a {
+    font-size: 12.5px;
+    color: var(--modir-text);
+    background: var(--modir-bg, #f6f7f7);
+    border-radius: 8px;
+    padding: 9px 12px;
+    text-decoration: none;
+}
+
+.modir-side-shortcuts a:hover {
+    color: var(--modir-primary);
+}
+
+@media (max-width: 960px) {
+    .modir-dash-grid {
+        flex-direction: column;
+    }
+}
+
+body.modir-dark-mode .modir-role-switch {
+    background: color-mix(in srgb, var(--modir-primary) 10%, var(--modir-surface));
+}
+
+body.modir-dark-mode .modir-task-item,
+body.modir-dark-mode .modir-pending-order-row {
+    border-bottom-color: color-mix(in srgb, #fff 8%, transparent);
+}
+
+body.modir-dark-mode .modir-side-shortcuts a {
+    background: color-mix(in srgb, #fff 6%, transparent);
+}

@@ -187,34 +187,167 @@ function modir_render_dashboard_page() {
     $pending_count  = count(wc_get_orders(array('status' => array('pending', 'on-hold'), 'type' => 'shop_order', 'limit' => -1, 'return' => 'ids')));
     $total_products = (int) wp_count_posts('product')->publish;
     $out_of_stock   = count(wc_get_products(array('stock_status' => 'outofstock', 'limit' => -1, 'return' => 'ids')));
+
+    /* ---- داده‌های کارت «کارهای امروز شما» (طرح رابط کاربری جدید) ---- */
+    $needs_check_count = count(wc_get_products(array(
+        'meta_query' => array(array('key' => '_modir_needs_check', 'value' => '1', 'compare' => '=')),
+        'limit'      => -1,
+        'return'     => 'ids',
+    )));
+
+    $unresolved_support = 0;
+    foreach (get_option('modir_chat_log', array()) as $row) {
+        if (!empty($row['needs_support']) && empty($row['resolved'])) {
+            $unresolved_support++;
+        }
+    }
+
+    $new_leads_count = 0;
+    foreach (get_option('modir_chat_leads', array()) as $lead) {
+        if ('new' === ($lead['status'] ?? '')) {
+            $new_leads_count++;
+        }
+    }
+
+    $tasks = array(
+        array(
+            'text'  => $unresolved_support > 0
+                ? 'پاسخ به ' . number_format_i18n($unresolved_support) . ' گفتگوی پشتیبانی در انتظار'
+                : 'هیچ گفتگوی پشتیبانی در انتظار پاسخ نیست',
+            'done'  => ($unresolved_support === 0),
+            'flag'  => $unresolved_support > 0 ? 'فوری' : '',
+            'flag_class' => 'is-urgent',
+            'roles' => 'seller manager',
+            'url'   => admin_url('admin.php?page=modir-marketing&tab=chat&ctab=log'),
+        ),
+        array(
+            'text'  => $pending_count > 0
+                ? number_format_i18n($pending_count) . ' سفارش جدید نیاز به تأیید و آماده‌سازی دارند'
+                : 'سفارش در انتظار تأیید وجود ندارد',
+            'done'  => ($pending_count === 0),
+            'flag'  => $pending_count > 0 ? 'فوری' : '',
+            'flag_class' => 'is-urgent',
+            'roles' => 'seller warehouse manager',
+            'url'   => admin_url('admin.php?page=modir-orders'),
+        ),
+        array(
+            'text'  => $needs_check_count > 0
+                ? number_format_i18n($needs_check_count) . ' محصول با پرچم «چک شود» قبل از ارسال'
+                : 'محصولی با پرچم «چک شود» باقی نمانده',
+            'done'  => ($needs_check_count === 0),
+            'flag'  => $needs_check_count > 0 ? 'بررسی‌نشده' : '',
+            'flag_class' => 'is-warn',
+            'roles' => 'warehouse manager',
+            'url'   => admin_url('admin.php?page=modir&needs_check=yes'),
+        ),
+        array(
+            'text'  => $new_leads_count > 0
+                ? number_format_i18n($new_leads_count) . ' لید جدید از دستیار گفتگو نیاز به تماس دارند'
+                : 'لید جدید بدون تماس وجود ندارد',
+            'done'  => ($new_leads_count === 0),
+            'flag'  => $new_leads_count > 0 ? 'جدید' : '',
+            'flag_class' => 'is-new',
+            'roles' => 'seller manager',
+            'url'   => admin_url('admin.php?page=modir-marketing&tab=chat&ctab=leads'),
+        ),
+    );
+    $tasks_done_count = count(array_filter($tasks, function ($t) { return $t['done']; }));
+
+    $pending_orders = wc_get_orders(array(
+        'status'  => array('pending', 'on-hold', 'processing'),
+        'type'    => 'shop_order',
+        'orderby' => 'date',
+        'order'   => 'DESC',
+        'limit'   => 5,
+        'return'  => 'objects',
+    ));
+    $all_statuses = wc_get_order_statuses();
     ?>
     <div class="wrap modir-wrap">
         <?php modir_render_top_header('dashboard', 'داشبورد', 'خلاصه وضعیت فروشگاه شما'); ?>
         <?php modir_settings_tabs_nav('modir-dashboard'); ?>
 
         <div class="modir-tab-panel">
-            <div class="modir-welcome-hero modir-today-sales-hero">
-                <div class="modir-today-sales-header">
-                    <div>
-                        <p class="modir-today-sales-title">فروش امروز</p>
-                        <p class="modir-today-sales-subtitle"><?php echo number_format_i18n(count($today_products)); ?> کالای مختلف — <?php echo wp_kses_post(wc_price($today_sales)); ?></p>
+
+            <div class="modir-role-switch" id="modir-role-switch">
+                <button type="button" class="is-active" data-role="seller">فروشنده</button>
+                <button type="button" data-role="warehouse">انباردار</button>
+                <button type="button" data-role="manager">مدیر فروش</button>
+            </div>
+
+            <div class="modir-dash-grid">
+                <div class="modir-dash-main">
+
+                    <div class="modir-task-card">
+                        <div class="modir-task-card-head">
+                            <span>کارهای امروز شما</span>
+                            <span class="modir-task-progress"><?php echo number_format_i18n($tasks_done_count); ?> از <?php echo number_format_i18n(count($tasks)); ?> انجام‌شده</span>
+                        </div>
+                        <ul class="modir-task-list">
+                            <?php foreach ($tasks as $task) : ?>
+                                <li class="modir-task-item<?php echo $task['done'] ? ' is-done' : ''; ?>" data-role="<?php echo esc_attr($task['roles']); ?>">
+                                    <a href="<?php echo esc_url($task['url']); ?>" class="modir-task-check" aria-hidden="true"><span class="dashicons dashicons-yes"></span></a>
+                                    <a href="<?php echo esc_url($task['url']); ?>" class="modir-task-text"><?php echo esc_html($task['text']); ?></a>
+                                    <?php if ($task['flag']) : ?>
+                                        <span class="modir-task-flag <?php echo esc_attr($task['flag_class']); ?>"><?php echo esc_html($task['flag']); ?></span>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
                     </div>
-                    <a href="<?php echo esc_url(admin_url('admin.php?page=modir-orders')); ?>" class="button modir-btn">مشاهده سفارشات</a>
-                </div>
-                <?php if (empty($today_products)) : ?>
-                    <p class="modir-empty" style="margin:0;">هنوز امروز فروشی ثبت نشده است.</p>
-                <?php else : ?>
-                    <div class="modir-today-sales-list">
-                        <?php foreach (array_slice($today_products, 0, 6) as $row) : ?>
-                            <div class="modir-today-sales-item">
-                                <?php echo wp_kses_post($row['image']); ?>
-                                <span class="modir-today-sales-name"><?php echo esc_html($row['name']); ?></span>
-                                <span class="modir-today-sales-qty">×<?php echo number_format_i18n($row['qty']); ?></span>
-                                <span class="modir-stat-badge" style="background:<?php echo esc_attr($row['status_color']); ?>22;color:<?php echo esc_attr($row['status_color']); ?>;"><?php echo esc_html($row['status_label']); ?></span>
+
+                    <div class="modir-task-card">
+                        <div class="modir-task-card-head"><span>سفارشات در انتظار شما</span></div>
+                        <?php if (empty($pending_orders)) : ?>
+                            <p class="modir-empty" style="margin:0;">سفارش در انتظاری وجود ندارد.</p>
+                        <?php else : ?>
+                            <div class="modir-pending-orders-list">
+                                <?php foreach ($pending_orders as $o) :
+                                    if (!is_a($o, 'WC_Order')) {
+                                        continue;
+                                    }
+                                    $status_slug  = $o->get_status();
+                                    $status_label = $all_statuses['wc-' . $status_slug] ?? $status_slug;
+                                    $status_color = function_exists('modir_orders_list_status_color') ? modir_orders_list_status_color($status_slug) : '#9ca3af';
+                                    $order_url    = method_exists($o, 'get_edit_order_url') ? $o->get_edit_order_url() : admin_url('post.php?post=' . $o->get_id() . '&action=edit');
+                                    $name         = trim($o->get_formatted_billing_full_name());
+                                    $item_count   = count($o->get_items());
+                                    ?>
+                                    <a href="<?php echo esc_url($order_url); ?>" class="modir-pending-order-row">
+                                        <span class="modir-po-num">سفارش #<?php echo esc_html($o->get_order_number()); ?></span>
+                                        <span class="modir-po-meta"><?php echo esc_html($name ?: 'مهمان'); ?> · <?php echo number_format_i18n($item_count); ?> قلم کالا</span>
+                                        <span class="modir-po-badge" style="background:<?php echo esc_attr($status_color); ?>22;color:<?php echo esc_attr($status_color); ?>;"><?php echo esc_html($status_label); ?></span>
+                                    </a>
+                                <?php endforeach; ?>
                             </div>
-                        <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
-                <?php endif; ?>
+
+                </div>
+
+                <div class="modir-dash-side">
+                    <div class="modir-side-card modir-side-card-primary">
+                        <div class="modir-side-label">فروش امروز</div>
+                        <div class="modir-side-value"><?php echo wp_kses_post(wc_price($today_sales)); ?></div>
+                        <div class="modir-side-foot"><?php echo number_format_i18n(count($today_orders)); ?> سفارش · <?php echo number_format_i18n(count($today_products)); ?> کالای مختلف</div>
+                    </div>
+
+                    <div class="modir-side-card">
+                        <div class="modir-side-label">دستیار گفتگو</div>
+                        <div class="modir-side-sub">گفتگوهای باز نیازمند پشتیبانی انسانی</div>
+                        <div class="modir-side-big<?php echo $unresolved_support > 0 ? ' is-danger' : ''; ?>"><?php echo number_format_i18n($unresolved_support); ?></div>
+                    </div>
+
+                    <div class="modir-side-card">
+                        <div class="modir-side-label">میانبرها</div>
+                        <div class="modir-side-shortcuts">
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=modir&tab=import')); ?>">+ افزودن محصول</a>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=modir-label')); ?>">چاپ لیبل سفارشات</a>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=modir-marketing&tab=chat&ctab=log')); ?>">مشاهده گفتگوها</a>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=modir-bulk-edit')); ?>">ویرایش گروهی</a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="modir-quick-links">

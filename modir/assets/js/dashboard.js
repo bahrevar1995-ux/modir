@@ -1,4 +1,17 @@
 jQuery(document).ready(function ($) {
+    // سوییچ نقش در بالای داشبورد: فقط یک فیلتر نمایشی روی کارت «کارهای امروز
+    // شما» است (بر اساس ویژگی data-role هر آیتم) — به‌طور جداگانه از نمودار
+    // فروش اجرا می‌شود تا حتی اگر نمودار در دسترس نبود هم کار کند.
+    $('#modir-role-switch button').on('click', function () {
+        var role = $(this).data('role');
+        $('#modir-role-switch button').removeClass('is-active');
+        $(this).addClass('is-active');
+        $('.modir-task-item[data-role]').each(function () {
+            var roles = ($(this).data('role') + '').split(' ');
+            $(this).toggle(roles.indexOf(String(role)) !== -1);
+        });
+    });
+
     if (typeof ModirDashboard === 'undefined') {
         return;
     }

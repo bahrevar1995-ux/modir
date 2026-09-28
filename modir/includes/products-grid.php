@@ -613,6 +613,13 @@ function modir_products_render_main_content() {
         return;
     }
     $categories = get_terms(array('taxonomy' => 'product_cat', 'hide_empty' => false));
+
+    // اگر از میانبر «کارهای امروز» در داشبورد با needs_check=yes وارد این صفحه
+    // شده باشیم، همان لحظه اول هم جدول و هم فیلتر روی «فقط نیازمند چک» باشند.
+    $initial_check_filter = '';
+    if (isset($_GET['needs_check']) && in_array($_GET['needs_check'], array('yes', 'no'), true)) {
+        $initial_check_filter = sanitize_key($_GET['needs_check']);
+    }
     ?>
     <div class="modir-toolbar">
         <div class="modir-toolbar-group">
@@ -652,9 +659,9 @@ function modir_products_render_main_content() {
 
         <div class="modir-toolbar-group">
             <select class="modir-pill-select" id="modir-products-check-filter">
-                <option value="">چک قبل از ارسال</option>
-                <option value="yes">فقط نیازمند چک</option>
-                <option value="no">فقط بدون نیاز به چک</option>
+                <option value="" <?php selected($initial_check_filter, ''); ?>>چک قبل از ارسال</option>
+                <option value="yes" <?php selected($initial_check_filter, 'yes'); ?>>فقط نیازمند چک</option>
+                <option value="no" <?php selected($initial_check_filter, 'no'); ?>>فقط بدون نیاز به چک</option>
             </select>
         </div>
 
@@ -665,7 +672,7 @@ function modir_products_render_main_content() {
     </div>
 
     <div id="modir-products-grid-container">
-        <?php echo modir_products_render_table(); ?>
+        <?php echo modir_products_render_table(array('needs_check' => $initial_check_filter)); ?>
     </div>
     <?php
 }
