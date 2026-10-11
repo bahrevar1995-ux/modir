@@ -139,7 +139,11 @@ function modir_order_statuses_maybe_recover() {
     }
 
     $back = array('page' => 'modir-orders', 'tab' => 'statuses');
-    $from = isset($_POST['from']) ? sanitize_text_field(wp_unslash($_POST['from'])) : '';
+    // عمداً sanitize_text_field نمی‌زنیم: آن تابع دنباله‌های درصدی مثل %d8%a8 را
+    // (که اسلاگ‌های فارسی کدشده دارند) حذف می‌کند و مقدار دیگر پیدا نمی‌شود.
+    // به‌جای آن، مقدار فقط وقتی پذیرفته می‌شود که دقیقاً با یکی از وضعیت‌های
+    // واقعی موجود در دیتابیس (فهرست سفید) برابر باشد.
+    $from = isset($_POST['from']) ? (string) wp_unslash($_POST['from']) : '';
     $mode = isset($_POST['mode']) ? sanitize_key(wp_unslash($_POST['mode'])) : 'move';
 
     $orphans = modir_order_statuses_find_orphans();
@@ -172,7 +176,7 @@ function modir_order_statuses_maybe_recover() {
         exit;
     }
 
-    $to = isset($_POST['to']) ? sanitize_text_field(wp_unslash($_POST['to'])) : '';
+    $to = isset($_POST['to']) ? (string) wp_unslash($_POST['to']) : '';
     if (!isset(wc_get_order_statuses()[$to])) {
         wp_safe_redirect(add_query_arg($back + array('error' => 'norecover'), admin_url('admin.php')));
         exit;
