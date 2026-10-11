@@ -16,6 +16,7 @@ function modir_order_statuses_init() {
 
     add_action('admin_init', 'modir_order_statuses_maybe_save');
     add_action('admin_init', 'modir_order_statuses_maybe_delete');
+    add_action('admin_init', 'modir_order_statuses_maybe_recover');
 
     add_action('admin_enqueue_scripts', 'modir_order_statuses_admin_css');
 
@@ -33,6 +34,153 @@ function modir_order_statuses_init() {
 function modir_order_statuses_get_all() {
     $v = get_option('modir_custom_order_statuses', array());
     return is_array($v) ? $v : array();
+}
+
+/* -------------------------------------------------------------------- */
+/* سفارش‌های «بی‌وضعیت» (یتیم) و انتقال سفارش‌ها بین وضعیت‌ها            */
+/*                                                                       */
+/* وضعیت هر سفارش به‌صورت متن (مثلاً wc-packing) در دیتابیس ذخیره می‌شود. */
+/* اگر اسلاگ یک وضعیت سفارشی عوض یا حذف شود، سفارش‌ها هنوز همان متن قدیمی */
+/* را دارند ولی دیگر چنین وضعیتی ثبت نیست؛ ووکامرس هم در هیچ لیستی (حتی   */
+/* «همه») سفارشی با وضعیت ناشناخته را نشان نمی‌دهد. این بخش آن‌ها را پیدا */
+/* و به یک وضعیت معتبر منتقل می‌کند.                                      */
+/* -------------------------------------------------------------------- */
+
+function modir_order_statuses_known_keys() {
+    $keys = array_keys(wc_get_order_statuses());
+    return array_merge($keys, array('trash', 'auto-draft', 'draft', 'inherit', 'wc-checkout-draft'));
+}
+
+function modir_order_statuses_hpos_table() {
+    global $wpdb;
+    $table = $wpdb->prefix . 'wc_orders';
+    return ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table) ? $table : '';
+}
+
+/**
+ * @return array وضعیت_ناشناخته => تعداد سفارش
+ */
+function modir_order_statuses_find_orphans() {
+    global $wpdb;
+    $known  = modir_order_statuses_known_keys();
+    $counts = array();
+
+    $rows = $wpdb->get_results("SELECT post_status AS st, COUNT(*) AS c FROM {$wpdb->posts} WHERE post_type = 'shop_order' GROUP BY post_status");
+    foreach ((array) $rows as $r) {
+        if (!in_array($r->st, $known, true)) {
+            $counts[$r->st] = max(isset($counts[$r->st]) ? $counts[$r->st] : 0, (int) $r->c);
+        }
+    }
+
+    $table = modir_order_statuses_hpos_table();
+    if ($table) {
+        $rows = $wpdb->get_results("SELECT status AS st, COUNT(*) AS c FROM {$table} WHERE type = 'shop_order' GROUP BY status");
+        foreach ((array) $rows as $r) {
+            if (!in_array($r->st, $known, true)) {
+                $counts[$r->st] = max(isset($counts[$r->st]) ? $counts[$r->st] : 0, (int) $r->c);
+            }
+        }
+    }
+
+    return $counts;
+}
+
+/**
+ * همه سفارش‌هایی که وضعیتشان $from است را (در هر دو ذخیره‌گاه: جدول قدیمی
+ * پست‌ها و جدول جدید HPOS، و جدول آمار ووکامرس) به $to منتقل می‌کند.
+ * هر دو مقدار با پیشوند wc- هستند. تعداد سفارش‌های منتقل‌شده را برمی‌گرداند.
+ */
+function modir_order_statuses_migrate_orders($from, $to) {
+    global $wpdb;
+    if (!$from || !$to || $from === $to) {
+        return 0;
+    }
+
+    $ids = array();
+
+    $legacy = $wpdb->get_col($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'shop_order' AND post_status = %s", $from));
+    if ($legacy) {
+        $ids = array_merge($ids, $legacy);
+        $wpdb->query($wpdb->prepare("UPDATE {$wpdb->posts} SET post_status = %s WHERE post_type = 'shop_order' AND post_status = %s", $to, $from));
+    }
+
+    $table = modir_order_statuses_hpos_table();
+    if ($table) {
+        $hpos = $wpdb->get_col($wpdb->prepare("SELECT id FROM {$table} WHERE type = 'shop_order' AND status = %s", $from));
+        if ($hpos) {
+            $ids = array_merge($ids, $hpos);
+            $wpdb->query($wpdb->prepare("UPDATE {$table} SET status = %s WHERE type = 'shop_order' AND status = %s", $to, $from));
+        }
+    }
+
+    $stats = $wpdb->prefix . 'wc_order_stats';
+    if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $stats)) === $stats) {
+        $wpdb->query($wpdb->prepare("UPDATE {$stats} SET status = %s WHERE status = %s", $to, $from));
+    }
+
+    $ids = array_unique(array_map('intval', $ids));
+    foreach ($ids as $order_id) {
+        clean_post_cache($order_id);
+        wp_cache_delete($order_id, 'orders');
+    }
+
+    return count($ids);
+}
+
+function modir_order_statuses_maybe_recover() {
+    if (empty($_POST['modir_order_status_recover_nonce'])) {
+        return;
+    }
+    if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['modir_order_status_recover_nonce'])), 'modir_order_status_recover')) {
+        return;
+    }
+    if (!current_user_can('manage_woocommerce')) {
+        return;
+    }
+
+    $back = array('page' => 'modir-orders', 'tab' => 'statuses');
+    $from = isset($_POST['from']) ? sanitize_text_field(wp_unslash($_POST['from'])) : '';
+    $mode = isset($_POST['mode']) ? sanitize_key(wp_unslash($_POST['mode'])) : 'move';
+
+    $orphans = modir_order_statuses_find_orphans();
+    if (!$from || !isset($orphans[$from])) {
+        wp_safe_redirect(add_query_arg($back + array('error' => 'norecover'), admin_url('admin.php')));
+        exit;
+    }
+
+    if ('restore' === $mode) {
+        // ثبت دوباره همان وضعیت قدیمی (با همان اسلاگ) تا سفارش‌ها بدون جابه‌جایی برگردند
+        if (0 !== strpos($from, 'wc-')) {
+            wp_safe_redirect(add_query_arg($back + array('error' => 'norecover'), admin_url('admin.php')));
+            exit;
+        }
+        $slug  = substr($from, 3);
+        $label = isset($_POST['label']) ? sanitize_text_field(wp_unslash($_POST['label'])) : '';
+        if (!$label) {
+            $label = $slug;
+        }
+        $statuses = modir_order_statuses_get_all();
+        foreach ($statuses as $existing) {
+            if ($existing['slug'] === $slug) {
+                wp_safe_redirect(add_query_arg($back + array('error' => 'duplicate'), admin_url('admin.php')));
+                exit;
+            }
+        }
+        $statuses[] = array('id' => 'os_' . uniqid(), 'label' => $label, 'slug' => $slug, 'color' => '#6b7280');
+        update_option('modir_custom_order_statuses', $statuses);
+        wp_safe_redirect(add_query_arg($back + array('recovered' => $orphans[$from]), admin_url('admin.php')));
+        exit;
+    }
+
+    $to = isset($_POST['to']) ? sanitize_text_field(wp_unslash($_POST['to'])) : '';
+    if (!isset(wc_get_order_statuses()[$to])) {
+        wp_safe_redirect(add_query_arg($back + array('error' => 'norecover'), admin_url('admin.php')));
+        exit;
+    }
+
+    $moved = modir_order_statuses_migrate_orders($from, $to);
+    wp_safe_redirect(add_query_arg($back + array('recovered' => $moved), admin_url('admin.php')));
+    exit;
 }
 
 /* -------------------------------------------------------------------- */
@@ -232,6 +380,8 @@ function modir_order_statuses_maybe_save() {
             break;
         }
     }
+    $old_slug = (null !== $index && !empty($statuses[$index]['slug'])) ? $statuses[$index]['slug'] : '';
+
     if (null !== $index) {
         $statuses[$index] = $status_data;
     } else {
@@ -240,7 +390,18 @@ function modir_order_statuses_maybe_save() {
 
     update_option('modir_custom_order_statuses', $statuses);
 
-    wp_safe_redirect(add_query_arg(array('page' => 'modir-orders', 'tab' => 'statuses', 'saved' => '1'), admin_url('admin.php')));
+    // اگر اسلاگ عوض شده، سفارش‌هایی که روی اسلاگ قدیمی بودند باید همراهش
+    // جابه‌جا شوند، وگرنه در هیچ لیستی دیده نمی‌شوند.
+    $migrated = 0;
+    if ($old_slug && $old_slug !== $slug) {
+        $migrated = modir_order_statuses_migrate_orders('wc-' . $old_slug, 'wc-' . $slug);
+    }
+
+    $args = array('page' => 'modir-orders', 'tab' => 'statuses', 'saved' => '1');
+    if ($migrated) {
+        $args['migrated'] = $migrated;
+    }
+    wp_safe_redirect(add_query_arg($args, admin_url('admin.php')));
     exit;
 }
 
@@ -283,6 +444,15 @@ function modir_order_statuses_render_content() {
     <?php if (isset($_GET['saved'])) : ?>
         <div class="notice notice-success is-dismissible"><p>وضعیت با موفقیت ذخیره شد و از همین حالا در فرم ویرایش سفارش قابل انتخاب است.</p></div>
     <?php endif; ?>
+    <?php if (!empty($_GET['migrated'])) : ?>
+        <div class="notice notice-success is-dismissible"><p><?php echo esc_html(number_format_i18n((int) $_GET['migrated'])); ?> سفارش هم به اسلاگ جدید منتقل شد.</p></div>
+    <?php endif; ?>
+    <?php if (isset($_GET['recovered'])) : ?>
+        <div class="notice notice-success is-dismissible"><p>سفارش‌های گم‌شده برگردانده شدند (<?php echo esc_html(number_format_i18n((int) $_GET['recovered'])); ?> سفارش).</p></div>
+    <?php endif; ?>
+    <?php if ('norecover' === $error) : ?>
+        <div class="notice notice-error is-dismissible"><p>این وضعیت دیگر در دیتابیس وجود ندارد یا انتخاب نامعتبر بود.</p></div>
+    <?php endif; ?>
     <?php if (isset($_GET['deleted'])) : ?>
         <div class="notice notice-success is-dismissible"><p>وضعیت حذف شد.</p></div>
     <?php endif; ?>
@@ -318,7 +488,39 @@ function modir_render_order_statuses_page() {
     modir_render_orders_list_page();
 }
 
+function modir_order_statuses_render_orphans() {
+    $orphans = modir_order_statuses_find_orphans();
+    if (empty($orphans)) {
+        return;
+    }
+    $targets = wc_get_order_statuses();
+    ?>
+    <div class="notice notice-warning inline" style="padding:14px 16px;">
+        <p><strong>سفارش‌های بدون وضعیت معتبر پیدا شد!</strong> این سفارش‌ها در دیتابیس هستند ولی چون وضعیتشان دیگر در سایت تعریف نیست (مثلاً اسلاگ وضعیت عوض یا وضعیت حذف شده)، ووکامرس آن‌ها را در هیچ لیستی نشان نمی‌دهد. برای هر وضعیت، یکی از دو کار را انجام بده:</p>
+        <?php foreach ($orphans as $key => $count) : ?>
+            <form method="post" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0;padding:10px;background:#fff;border:1px solid #e2e4e7;border-radius:8px;">
+                <?php wp_nonce_field('modir_order_status_recover', 'modir_order_status_recover_nonce'); ?>
+                <input type="hidden" name="from" value="<?php echo esc_attr($key); ?>">
+                <span><code><?php echo esc_html($key); ?></code> — <strong><?php echo esc_html(number_format_i18n($count)); ?> سفارش</strong></span>
+                <span style="flex:1;"></span>
+                <select name="to">
+                    <?php foreach ($targets as $t_key => $t_label) : ?>
+                        <option value="<?php echo esc_attr($t_key); ?>"><?php echo esc_html($t_label); ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="submit" name="mode" value="move" class="button button-primary modir-btn">انتقال سفارش‌ها به این وضعیت</button>
+                <?php if (0 === strpos($key, 'wc-')) : ?>
+                    <input type="text" name="label" placeholder="عنوان وضعیت (برای بازگردانی)" style="width:190px;">
+                    <button type="submit" name="mode" value="restore" class="button modir-btn">بازگردانی همین وضعیت</button>
+                <?php endif; ?>
+            </form>
+        <?php endforeach; ?>
+    </div>
+    <?php
+}
+
 function modir_order_statuses_render_list() {
+    modir_order_statuses_render_orphans();
     $statuses = modir_order_statuses_get_all();
     $new_url  = add_query_arg(array('page' => 'modir-orders', 'tab' => 'statuses', 'modir_status_form' => 'new'), admin_url('admin.php'));
     ?>
@@ -348,7 +550,7 @@ function modir_order_statuses_render_list() {
                         <td><code>wc-<?php echo esc_html($status['slug']); ?></code></td>
                         <td>
                             <a href="<?php echo esc_url($edit_url); ?>">ویرایش</a> |
-                            <a href="<?php echo esc_url($delete_url); ?>" class="modir-link-danger" onclick="return confirm('حذف شود؟ سفارش‌هایی که الان روی این وضعیت هستند حذف نمی‌شوند ولی برچسبشان دیگر در لیست‌ها به‌درستی نمایش داده نمی‌شود.');">حذف</a>
+                            <a href="<?php echo esc_url($delete_url); ?>" class="modir-link-danger" onclick="return confirm('حذف شود؟ سفارش‌هایی که الان روی این وضعیت هستند حذف نمی‌شوند ولی تا وقتی به وضعیت دیگری منتقلشان نکنی در لیست‌ها دیده نمی‌شوند (همین‌جا بالای لیست می‌توانی منتقلشان کنی).');">حذف</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -389,7 +591,7 @@ function modir_order_statuses_render_form($action) {
                 <th scope="row">اسلاگ (انگلیسی، اختیاری)</th>
                 <td>
                     <input type="text" name="slug" class="regular-text" value="<?php echo esc_attr($status['slug']); ?>" placeholder="خالی بگذار تا خودکار از عنوان ساخته شود" maxlength="<?php echo (int) MODIR_ORDER_STATUS_SLUG_MAXLEN; ?>">
-                    <p class="description">فقط حروف انگلیسی، عدد و خط‌تیره؛ حداکثر <?php echo (int) MODIR_ORDER_STATUS_SLUG_MAXLEN; ?> کاراکتر (محدودیت فنی وردپرس).</p>
+                    <p class="description">فقط حروف انگلیسی، عدد و خط‌تیره؛ حداکثر <?php echo (int) MODIR_ORDER_STATUS_SLUG_MAXLEN; ?> کاراکتر (محدودیت فنی وردپرس). اگر اسلاگ یک وضعیت موجود را عوض کنی، سفارش‌هایی که روی آن هستند خودکار به اسلاگ جدید منتقل می‌شوند.</p>
                 </td>
             </tr>
             <tr>
