@@ -35,6 +35,7 @@ function modir_widgets_default_settings() {
         'returns_recent'     => 1,
         'chat_support'       => 1,
         'chat_overview'      => 1,
+        'shopping_list'      => 1,
     );
 }
 
@@ -76,6 +77,9 @@ function modir_widgets_register() {
     }
     if (!empty($s['processing_orders'])) {
         wp_add_dashboard_widget('modir_widget_processing', '<span class="dashicons dashicons-archive" style="font-size:16px;"></span> سفارش‌های در حال انجام', 'modir_widget_render_processing');
+    }
+    if (!empty($s['shopping_list'])) {
+        wp_add_dashboard_widget('modir_widget_shopping_list', '<span class="dashicons dashicons-cart" style="font-size:16px;"></span> لیست خرید', 'modir_widget_render_shopping_list');
     }
     if (!empty($s['status_counts'])) {
         wp_add_dashboard_widget('modir_widget_status_counts', '<span class="dashicons dashicons-chart-line" style="font-size:16px;"></span> تعداد سفارش‌ها بر اساس وضعیت', 'modir_widget_render_status_counts');
@@ -233,6 +237,106 @@ function modir_widget_render_processing() {
                     </span>
                     <span class="modir-w-order-price"><?php echo wp_kses_post(wc_price($order->get_total())); ?></span>
                 </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php
+}
+
+/* -------------------------------------------------------------------- */
+/* ابزارک: لیست خرید (جمع تعداد هر محصول در سفارش‌های «در حال انجام»)       */
+/* -------------------------------------------------------------------- */
+
+function modir_widget_render_shopping_list() {
+    $s      = modir_widgets_get_settings();
+    $status = !empty($s['processing_status']) ? $s['processing_status'] : 'processing';
+
+    $orders = wc_get_orders(array(
+        'status' => array($status),
+        'type'   => 'shop_order',
+        'limit'  => -1,
+        'return' => 'objects',
+    ));
+
+    $rows = array();
+    foreach ($orders as $order) {
+        if (!is_a($order, 'WC_Order')) {
+            continue;
+        }
+        foreach ($order->get_items('line_item') as $item) {
+            $product = $item->get_product();
+            $key     = $product ? $product->get_id() : 'x' . md5($item->get_name());
+            if (!isset($rows[$key])) {
+                $rows[$key] = array(
+                    'name'    => $item->get_name(),
+                    'product' => $product,
+                    'qty'     => 0,
+                    'orders'  => array(),
+                );
+            }
+            $rows[$key]['qty'] += (float) $item->get_quantity();
+            $rows[$key]['orders'][$order->get_id()] = true;
+        }
+    }
+
+    $all_statuses = wc_get_order_statuses();
+    $status_label = isset($all_statuses['wc-' . $status]) ? $all_statuses['wc-' . $status] : $status;
+
+    if (empty($rows)) {
+        echo '<div class="modir-w-wrap"><p class="modir-w-empty">در حال حاضر سفارشی در وضعیت «' . esc_html($status_label) . '» وجود ندارد.</p></div>';
+        return;
+    }
+
+    uasort($rows, function ($a, $b) {
+        return $b['qty'] <=> $a['qty'];
+    });
+
+    $max_qty   = max(1, (float) reset($rows)['qty']);
+    $total_qty = array_sum(wp_list_pluck($rows, 'qty'));
+    ?>
+    <div class="modir-w-wrap">
+        <div class="modir-w-cards">
+            <div class="modir-w-card modir-w-card-indigo">
+                <span class="modir-w-card-label">اقلام متفاوت</span>
+                <span class="modir-w-card-value"><?php echo esc_html(number_format_i18n(count($rows))); ?></span>
+            </div>
+            <div class="modir-w-card modir-w-card-peach">
+                <span class="modir-w-card-label">جمع تعداد</span>
+                <span class="modir-w-card-value"><?php echo esc_html(number_format_i18n($total_qty)); ?></span>
+            </div>
+            <div class="modir-w-card modir-w-card-indigo">
+                <span class="modir-w-card-label">سفارش «<?php echo esc_html($status_label); ?>»</span>
+                <span class="modir-w-card-value"><?php echo esc_html(number_format_i18n(count($orders))); ?></span>
+            </div>
+        </div>
+
+        <div class="modir-w-shop-list">
+            <?php foreach ($rows as $row) :
+                $product = $row['product'];
+                $image   = $product ? $product->get_image('thumbnail') : '';
+                if (!$image) {
+                    $image = wc_placeholder_img('thumbnail');
+                }
+                $pct      = max(6, round(($row['qty'] / $max_qty) * 100));
+                $shortage = 0;
+                if ($product && $product->managing_stock() && null !== $product->get_stock_quantity() && $product->get_stock_quantity() < $row['qty']) {
+                    $shortage = $row['qty'] - max(0, (float) $product->get_stock_quantity());
+                }
+                ?>
+                <div class="modir-w-shop-row">
+                    <span class="modir-w-order-thumb"><?php echo wp_kses_post($image); ?></span>
+                    <span class="modir-w-shop-info">
+                        <span class="modir-w-shop-name"><?php echo esc_html($row['name']); ?></span>
+                        <span class="modir-w-shop-bar"><span style="width:<?php echo esc_attr($pct); ?>%;"></span></span>
+                        <span class="modir-w-shop-meta">
+                            در <?php echo esc_html(number_format_i18n(count($row['orders']))); ?> سفارش
+                            <?php if ($shortage > 0) : ?>
+                                <span class="modir-w-shop-short">کمبود موجودی: <?php echo esc_html(number_format_i18n($shortage)); ?></span>
+                            <?php endif; ?>
+                        </span>
+                    </span>
+                    <span class="modir-w-shop-qty">×<?php echo esc_html(number_format_i18n($row['qty'])); ?></span>
+                </div>
             <?php endforeach; ?>
         </div>
     </div>

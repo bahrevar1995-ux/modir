@@ -243,7 +243,7 @@ function modir_settings_maybe_save() {
     /* ابزارک‌های پیشخوان */
     $w_in  = isset($input['modir_widgets_settings']) && is_array($input['modir_widgets_settings']) ? $input['modir_widgets_settings'] : array();
     $w_out = array();
-    foreach (array('today_sales', 'month_sales', 'processing_orders', 'status_counts', 'returns_stats', 'returns_recent', 'chat_support', 'chat_overview') as $key) {
+    foreach (array('today_sales', 'month_sales', 'processing_orders', 'status_counts', 'returns_stats', 'returns_recent', 'chat_support', 'chat_overview', 'shopping_list') as $key) {
         $w_out[$key] = !empty($w_in[$key]) ? 1 : 0;
     }
     $w_out['processing_status']  = isset($w_in['processing_status']) ? sanitize_key($w_in['processing_status']) : 'processing';
@@ -418,9 +418,13 @@ function modir_settings_render_general_content() {
                             <input type="checkbox" name="modir_widgets_settings[chat_support]" value="1" <?php checked(!empty($w['chat_support'])); ?>>
                             درخواست‌های تماس از دستیار گفتگو
                         </label><br>
-                        <label class="modir-toggle">
+                        <label class="modir-toggle" style="margin-bottom:8px;">
                             <input type="checkbox" name="modir_widgets_settings[chat_overview]" value="1" <?php checked(!empty($w['chat_overview'])); ?>>
                             گزارش کلی دستیار گفتگو
+                        </label><br>
+                        <label class="modir-toggle">
+                            <input type="checkbox" name="modir_widgets_settings[shopping_list]" value="1" <?php checked(!empty($w['shopping_list'])); ?>>
+                            لیست خرید (جمع تعداد محصولات سفارش‌های «در حال انجام»)
                         </label>
                     </td>
                 </tr>
