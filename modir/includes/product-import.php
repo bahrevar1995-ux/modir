@@ -18,6 +18,7 @@ if (!defined('ABSPATH')) exit;
 function modir_import_init() {
     add_action('admin_enqueue_scripts', 'modir_import_admin_assets');
     add_action('wp_ajax_modir_import_auto_add', 'modir_import_ajax_auto_add');
+    add_action('wp_ajax_modir_import_from_json', 'modir_import_ajax_from_json');
     add_action('admin_init', 'modir_import_maybe_save_proxy');
     add_action('http_api_curl', 'modir_import_apply_proxy', 10, 3);
 }
@@ -133,6 +134,68 @@ function modir_import_ajax_auto_add() {
     }
 
     wp_send_json_success($result);
+}
+
+/* -------------------------------------------------------------------- */
+/* AJAX: ساخت محصول از داده‌ای که بوکمارکلت در مرورگر کاربر خوانده است       */
+/* (چون سیستم ضدربات دیجی‌کالا درخواست‌های سرور را قبول نمی‌کند)            */
+/* -------------------------------------------------------------------- */
+
+function modir_import_ajax_from_json() {
+    check_ajax_referer('modir_import_nonce', 'nonce');
+    if (!current_user_can('manage_woocommerce')) {
+        wp_send_json_error(array('message' => 'دسترسی غیرمجاز.'));
+    }
+
+    $payload = isset($_POST['payload']) ? json_decode(wp_unslash($_POST['payload']), true) : null;
+    if (!is_array($payload) || (empty($payload['title']) && empty($payload['images']))) {
+        wp_send_json_error(array('message' => 'اطلاعات Paste‌شده معتبر نیست. دوباره روی صفحه محصول دیجی‌کالا بوکمارکلت را بزن و نتیجه را همین‌جا Paste کن.'));
+    }
+
+    // فقط تصاویر از دامنه‌های خود دیجی‌کالا پذیرفته می‌شوند (جلوگیری از دانلود از آدرس دلخواه)
+    $images = array();
+    foreach ((array) ($payload['images'] ?? array()) as $img) {
+        $img  = esc_url_raw(is_string($img) ? $img : '');
+        $host = (string) wp_parse_url($img, PHP_URL_HOST);
+        if ($img && 'https' === wp_parse_url($img, PHP_URL_SCHEME) && preg_match('/(^|\.)(digikala\.com|dkstatics[a-z0-9-]*\.com)$/i', $host)) {
+            $images[] = $img;
+        }
+    }
+    $images = array_values(array_unique($images));
+
+    $title = sanitize_text_field((string) ($payload['title'] ?? ''));
+    $title = preg_replace('/^\s*خرید\s*و\s*قیمت\s*/u', '', $title);
+    $title = trim(preg_replace('/\s*[|\-–]\s*دیجی.?کالا\s*$/u', '', $title));
+
+    $data = array(
+        'title'       => $title,
+        'description' => wp_kses_post((string) ($payload['description'] ?? '')),
+        'price'       => '',
+        'image'       => !empty($images[0]) ? $images[0] : '',
+        'gallery'     => array_slice($images, 1),
+        'attributes'  => array(),
+        'source_url'  => esc_url_raw((string) ($payload['url'] ?? '')),
+        'source'      => 'digikala-browser',
+    );
+
+    $overrides = array(
+        'category_id' => isset($_POST['category_id']) ? absint($_POST['category_id']) : 0,
+        'price'       => isset($_POST['price']) ? sanitize_text_field(wp_unslash($_POST['price'])) : '',
+        'stock'       => isset($_POST['stock']) ? sanitize_key($_POST['stock']) : '',
+    );
+
+    $result = modir_import_create_product($data, $overrides);
+    if (is_wp_error($result)) {
+        wp_send_json_error(array('message' => $result->get_error_message()));
+    }
+    wp_send_json_success($result);
+}
+
+function modir_import_bookmarklet_code() {
+    $js = <<<'JS'
+(function(){try{var t=function(s){return (s||'').toString().trim()};var ld=null;document.querySelectorAll('script[type="application/ld+json"]').forEach(function(s){try{var j=JSON.parse(s.textContent);var a=Array.isArray(j)?j:(j['@graph']||[j]);a.forEach(function(o){if(o&&!ld&&(o['@type']==='Product'||(Array.isArray(o['@type'])&&o['@type'].indexOf('Product')>-1)))ld=o})}catch(e){}});var m=function(p){var e=document.querySelector('meta[property="'+p+'"],meta[name="'+p+'"]');return e?e.content:''};var title=t(ld&&ld.name)||t(m('og:title'))||t((document.querySelector('h1')||{}).textContent);var imgs=[];var add=function(u){if(u&&typeof u==='string'){u=u.split('?')[0];if(imgs.indexOf(u)<0)imgs.push(u)}};if(ld&&ld.image){[].concat(ld.image).forEach(function(i){add(typeof i==='string'?i:(i&&i.url))})}add(m('og:image'));document.querySelectorAll('img').forEach(function(i){var s=i.currentSrc||i.src||'';if(/dkstatics-public\.digikala\.com\/digikala-products\//.test(s))add(s)});var d=JSON.stringify({title:title,description:t(ld&&ld.description)||t(m('og:description')||m('description')),images:imgs.slice(0,8),url:location.href});if(!title&&!imgs.length){alert('اطلاعات محصول در این صفحه پیدا نشد. مطمئن شو روی صفحه خود محصول هستی.');return}navigator.clipboard.writeText(d).then(function(){alert('اطلاعات محصول کپی شد ('+imgs.length+' تصویر). حالا در مدیر Paste کن.')},function(){prompt('این متن را کپی کن:',d)})}catch(e){alert('خطا: '+e.message)}})();
+JS;
+    return 'javascript:' . rawurlencode(trim($js));
 }
 
 /* -------------------------------------------------------------------- */
@@ -635,6 +698,20 @@ function modir_import_render_content() {
         </form>
         <p class="description">فقط درخواست‌های مربوط به دیجی‌کالا از این پروکسی عبور می‌کنند. برای حذف، فیلد را خالی ذخیره کن.</p>
     </details>
+    <div class="modir-import-form" style="margin-bottom:18px;padding:14px;border:1px solid #e2e4e7;border-radius:12px;background:#fff;">
+        <strong>ایمپورت از دیجی‌کالا با بوکمارکلت (وقتی ایمپورت با لینک خطا می‌دهد)</strong>
+        <ol style="margin:8px 0 10px 0;">
+            <li>این دکمه را بگیر و روی نوار بوکمارک مرورگرت رها کن:
+                <a class="button" href="<?php echo esc_attr(modir_import_bookmarklet_code()); ?>" onclick="alert('این دکمه را با ماوس بگیر و روی نوار بوکمارک مرورگر بینداز؛ کلیک کردن روی آن اینجا کاری نمی‌کند.');return false;">📌 ایمپورت به مدیر</a>
+            </li>
+            <li>صفحه‌ی محصول را در دیجی‌کالا باز کن و روی بوکمارک بزن؛ اطلاعات محصول کپی می‌شود.</li>
+            <li>همین‌جا در کادر زیر Paste کن و دکمه را بزن. (دسته‌بندی، قیمت و موجودی پایین صفحه هم اعمال می‌شوند.)</li>
+        </ol>
+        <textarea id="modir-import-paste" rows="3" class="large-text" style="direction:ltr;" placeholder='{"title":"...","images":[...]}'></textarea>
+        <p style="margin:8px 0 0;"><button type="button" class="button button-primary modir-btn" id="modir-import-paste-btn">ساخت محصول از اطلاعات Paste‌شده</button></p>
+        <div id="modir-import-paste-status"></div>
+        <p class="description">قیمت از صفحه خوانده نمی‌شود (واحدش مطمئن نیست)؛ آن را در «قیمت ثابت» وارد کن یا بعداً در لیست محصولات بنویس. محصول همیشه پیش‌نویس ساخته می‌شود.</p>
+    </div>
     <div class="modir-import-form">
         <textarea id="modir-import-urls" rows="6" class="large-text" placeholder="https://www.digikala.com/product/dkp-.../&#10;https://www.digikala.com/product/dkp-.../&#10;https://example-shop.com/product/..."></textarea>
 

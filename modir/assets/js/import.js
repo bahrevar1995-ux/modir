@@ -110,4 +110,42 @@ jQuery(document).ready(function ($) {
         $status.empty();
         processAll(urls);
     });
+
+    // ایمپورت با بوکمارکلت: داده‌ای که از مرورگر خود کاربر روی صفحه دیجی‌کالا
+    // خوانده و کپی شده، اینجا Paste و به محصول تبدیل می‌شود.
+    $('#modir-import-paste-btn').on('click', function () {
+        var $btn = $(this);
+        var $status = $('#modir-import-paste-status');
+        var raw = ($('#modir-import-paste').val() || '').trim();
+
+        if (!raw) {
+            $status.html('<div class="notice notice-error inline"><p>اول اطلاعات کپی‌شده را Paste کن.</p></div>');
+            return;
+        }
+
+        $btn.prop('disabled', true);
+        $status.html('<p>در حال ساخت محصول و دانلود تصاویر...</p>');
+
+        $.post(ModirImport.ajaxUrl, {
+            action: 'modir_import_from_json',
+            nonce: ModirImport.nonce,
+            payload: raw,
+            category_id: $('#modir-import-category').val() || '',
+            price: $('#modir-import-price').val() || '',
+            stock: $('#modir-import-stock').val() || ''
+        }).done(function (res) {
+            if (res && res.success) {
+                var d = res.data;
+                $status.html('<div class="notice notice-success inline"><p>اضافه شد: <a href="' + d.edit_url + '" target="_blank">' + $('<div>').text(d.title).html() + '</a> (' + d.image_count + ' تصویر، پیش‌نویس)</p></div>');
+                $('#modir-import-paste').val('');
+            } else {
+                var msg = (res && res.data && res.data.message) || ModirImport.i18n.error;
+                $status.html('<div class="notice notice-error inline"><p>' + $('<div>').text(msg).html() + '</p></div>');
+            }
+        }).fail(function () {
+            $status.html('<div class="notice notice-error inline"><p>ارتباط با سرور برقرار نشد.</p></div>');
+        }).always(function () {
+            $btn.prop('disabled', false);
+        });
+    });
 });
