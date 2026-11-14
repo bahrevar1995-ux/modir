@@ -149,12 +149,25 @@ function modir_import_ajax_from_json() {
 
     $raw     = isset($_POST['payload']) ? (string) wp_unslash($_POST['payload']) : '';
     $payload = json_decode($raw, true);
-    if (!is_array($payload)) {
-        // کاربر کد کامل صفحه (Ctrl+U) را Paste کرده است
+    $overrides_pre = null;
+    if (is_array($payload) && isset($payload['data']) && is_array($payload['data'])) {
+        // پاسخ خام API دیجی‌کالا (کپی‌شده از DevTools ← Network ← Response)
+        $mapped = modir_import_digikala_map($payload, '');
+        if (!is_wp_error($mapped)) {
+            $payload = array(
+                'title'       => $mapped['title'],
+                'description' => $mapped['description'],
+                'images'      => array_merge(array($mapped['image']), $mapped['gallery']),
+                'url'         => isset($_POST['page_url']) ? esc_url_raw(wp_unslash($_POST['page_url'])) : '',
+                '_price'      => $mapped['price'],
+                '_attrs'      => $mapped['attributes'],
+            );
+        }
+    } elseif (!is_array($payload)) {
         $payload = modir_import_parse_page_html($raw);
     }
     if (!is_array($payload) || (empty($payload['title']) && empty($payload['images']))) {
-        wp_send_json_error(array('message' => 'اطلاعات محصولی در متن Paste‌شده پیدا نشد. مطمئن شو کد صفحه‌ی خود محصول در دیجی‌کالا (Ctrl+U، بعد Ctrl+A و Ctrl+C) را Paste کرده‌ای.'));
+        wp_send_json_error(array('message' => 'اطلاعات محصولی در متن Paste‌شده پیدا نشد. مطمئن شو پاسخ (Response) درخواست اطلاعات محصول را از DevTools ← Network کپی کرده‌ای.'));
     }
 
     // فقط تصاویر از دامنه‌های خود دیجی‌کالا پذیرفته می‌شوند (جلوگیری از دانلود از آدرس دلخواه)
@@ -175,10 +188,10 @@ function modir_import_ajax_from_json() {
     $data = array(
         'title'       => $title,
         'description' => wp_kses_post((string) ($payload['description'] ?? '')),
-        'price'       => '',
+        'price'       => isset($payload['_price']) ? (string) $payload['_price'] : '',
         'image'       => !empty($images[0]) ? $images[0] : '',
         'gallery'     => array_slice($images, 1),
-        'attributes'  => array(),
+        'attributes'  => isset($payload['_attrs']) && is_array($payload['_attrs']) ? $payload['_attrs'] : array(),
         'source_url'  => esc_url_raw((string) ($payload['url'] ?? '')),
         'source'      => 'digikala-browser',
     );
@@ -385,6 +398,13 @@ function modir_import_fetch_from_digikala($url) {
         return new WP_Error('bad_json', 'پاسخ دریافتی از دیجی‌کالا قابل خواندن نبود.');
     }
 
+    return modir_import_digikala_map($json, $url);
+}
+
+/**
+ * پاسخ JSON خام API دیجی‌کالا را به داده‌ی محصول تبدیل می‌کند.
+ */
+function modir_import_digikala_map($json, $url = '') {
     $product = $json['data']['product'] ?? ($json['data'] ?? null);
     if (!$product) {
         return new WP_Error('no_product', 'اطلاعات محصولی در پاسخ دیجی‌کالا پیدا نشد.');
@@ -785,7 +805,7 @@ function modir_import_render_content() {
     </details>
     <div class="modir-import-form" style="margin-bottom:18px;padding:14px;border:1px solid #e2e4e7;border-radius:12px;background:#fff;">
         <strong>ایمپورت از دیجی‌کالا (وقتی ایمپورت با لینک خطا می‌دهد)</strong>
-        <p style="margin:8px 0;"><b>روش ساده:</b> صفحه‌ی محصول را در دیجی‌کالا باز کن، <code>Ctrl+U</code> بزن (کد صفحه باز می‌شود)، <code>Ctrl+A</code> و بعد <code>Ctrl+C</code>، و همه را در کادر پایین Paste کن. نیازی به بوکمارک نیست.</p>
+        <p style="margin:8px 0;"><b>روش کپی از مرورگر:</b> صفحه‌ی محصول را در دیجی‌کالا باز کن، <code>F12</code> ← تب <code>Network</code> ← فیلتر <code>Fetch/XHR</code> ← صفحه را Refresh کن. روی درخواستی که آدرسش با شماره محصول (مثلاً <code>490390/?_rch=…</code>) تمام می‌شود و حجمش حدود ۸ کیلوبایت یا بیشتر است کلیک کن ← تب <code>Response</code> ← <code>Ctrl+A</code> و <code>Ctrl+C</code> و در کادر پایین Paste کن. (کوکی یا هدر کپی نکن؛ فقط Response.)</p>
         <details style="margin:0 0 8px;"><summary style="cursor:pointer;">روش دوم: بوکمارکلت (اختیاری)</summary>
         <ol style="margin:8px 0 10px 0;">
             <li>این دکمه را بگیر و روی نوار بوکمارک مرورگرت رها کن:
