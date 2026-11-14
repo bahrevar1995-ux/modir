@@ -18,6 +18,67 @@ if (!defined('ABSPATH')) exit;
 function modir_import_init() {
     add_action('admin_enqueue_scripts', 'modir_import_admin_assets');
     add_action('wp_ajax_modir_import_auto_add', 'modir_import_ajax_auto_add');
+    add_action('admin_init', 'modir_import_maybe_save_proxy');
+    add_action('http_api_curl', 'modir_import_apply_proxy', 10, 3);
+}
+
+/* -------------------------------------------------------------------- */
+/* پروکسی اختیاری برای درخواست‌های دیجی‌کالا                              */
+/* (وقتی دیجی‌کالا IP سرور هاست را مسدود کرده باشد)                       */
+/* -------------------------------------------------------------------- */
+
+function modir_import_get_proxy() {
+    return trim((string) get_option('modir_import_proxy', ''));
+}
+
+function modir_import_apply_proxy($handle, $args, $url) {
+    $proxy = modir_import_get_proxy();
+    if (!$proxy || !is_string($url)) {
+        return;
+    }
+    $host = (string) wp_parse_url($url, PHP_URL_HOST);
+    if (!preg_match('/(^|\.)(digikala\.com|dkstatics\.com|digikala\.dev)$/i', $host) && false === stripos($host, 'dkstatics')) {
+        return;
+    }
+    $p = wp_parse_url($proxy);
+    if (empty($p['host'])) {
+        return;
+    }
+    $scheme = isset($p['scheme']) ? strtolower($p['scheme']) : 'http';
+    $port   = isset($p['port']) ? (int) $p['port'] : 8080;
+    curl_setopt($handle, CURLOPT_PROXY, $p['host']);
+    curl_setopt($handle, CURLOPT_PROXYPORT, $port);
+    if (0 === strpos($scheme, 'socks5')) {
+        curl_setopt($handle, CURLOPT_PROXYTYPE, defined('CURLPROXY_SOCKS5_HOSTNAME') ? CURLPROXY_SOCKS5_HOSTNAME : CURLPROXY_SOCKS5);
+    }
+    if (!empty($p['user'])) {
+        curl_setopt($handle, CURLOPT_PROXYUSERPWD, rawurldecode($p['user']) . ':' . rawurldecode(isset($p['pass']) ? $p['pass'] : ''));
+    }
+}
+
+function modir_import_maybe_save_proxy() {
+    if (empty($_POST['modir_import_proxy_nonce'])) {
+        return;
+    }
+    if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['modir_import_proxy_nonce'])), 'modir_import_proxy_save')) {
+        return;
+    }
+    if (!current_user_can('manage_woocommerce')) {
+        return;
+    }
+    $proxy = isset($_POST['modir_import_proxy']) ? trim(sanitize_text_field(wp_unslash($_POST['modir_import_proxy']))) : '';
+    if ($proxy && !preg_match('#^(https?|socks5h?)://#i', $proxy)) {
+        $proxy = 'http://' . $proxy;
+    }
+    update_option('modir_import_proxy', $proxy, false);
+
+    $args = array('page' => 'modir', 'tab' => 'import', 'proxy_saved' => '1');
+    if (!empty($_POST['modir_import_proxy_test'])) {
+        $r = wp_remote_get('https://www.digikala.com/', array('timeout' => 20, 'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0 Safari/537.36'));
+        $args['proxy_test'] = is_wp_error($r) ? 'err' : (int) wp_remote_retrieve_response_code($r);
+    }
+    wp_safe_redirect(add_query_arg($args, admin_url('admin.php')));
+    exit;
 }
 
 function modir_import_admin_assets($hook) {
@@ -548,6 +609,25 @@ function modir_import_render_content() {
     }
     $categories = get_terms(array('taxonomy' => 'product_cat', 'hide_empty' => false));
     ?>
+    <?php if (isset($_GET['proxy_saved'])) : ?>
+        <div class="notice notice-success is-dismissible"><p>تنظیم پروکسی ذخیره شد.
+            <?php if (isset($_GET['proxy_test'])) :
+                $t = sanitize_text_field(wp_unslash($_GET['proxy_test'])); ?>
+                نتیجه تست اتصال به دیجی‌کالا: <strong><?php echo ('err' === $t) ? 'عدم اتصال' : 'کد ' . esc_html($t); ?></strong>
+                <?php echo ('200' === $t) ? '— اتصال برقرار است.' : '— اتصال موفق نیست.'; ?>
+            <?php endif; ?>
+        </p></div>
+    <?php endif; ?>
+    <details style="margin-bottom:14px;">
+        <summary style="cursor:pointer;font-weight:600;">تنظیم پروکسی برای دیجی‌کالا (فقط اگر خطای ۴۰۴ یا ۴۰۳ می‌گیری)</summary>
+        <form method="post" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <?php wp_nonce_field('modir_import_proxy_save', 'modir_import_proxy_nonce'); ?>
+            <input type="text" name="modir_import_proxy" value="<?php echo esc_attr(modir_import_get_proxy()); ?>" class="regular-text" style="direction:ltr;" placeholder="http://user:pass@host:port  یا  socks5://host:port">
+            <button type="submit" class="button modir-btn">ذخیره</button>
+            <button type="submit" name="modir_import_proxy_test" value="1" class="button modir-btn">ذخیره و تست اتصال</button>
+        </form>
+        <p class="description">فقط درخواست‌های مربوط به دیجی‌کالا از این پروکسی عبور می‌کنند. برای حذف، فیلد را خالی ذخیره کن.</p>
+    </details>
     <div class="modir-import-form">
         <textarea id="modir-import-urls" rows="6" class="large-text" placeholder="https://www.digikala.com/product/dkp-.../&#10;https://www.digikala.com/product/dkp-.../&#10;https://example-shop.com/product/..."></textarea>
 
