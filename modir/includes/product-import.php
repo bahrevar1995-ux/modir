@@ -178,8 +178,9 @@ function modir_import_fetch_from_digikala($url) {
         'x-web-optimize-response' => '1',
     );
 
-    $attempts = array();
-    $code     = 0;
+    $attempts      = array();
+    $first_snippet = '';
+    $code          = 0;
     $body     = '';
     foreach ($endpoints as $api_url) {
         $response = wp_remote_get($api_url, array(
@@ -194,6 +195,9 @@ function modir_import_fetch_from_digikala($url) {
         $code = (int) wp_remote_retrieve_response_code($response);
         $body = wp_remote_retrieve_body($response);
         $attempts[] = $code;
+        if (!$first_snippet && $code >= 400) {
+            $first_snippet = mb_substr(trim(preg_replace('/\s+/', ' ', wp_strip_all_tags($body))), 0, 160);
+        }
         if ($code >= 200 && $code < 300 && $body) {
             break;
         }
@@ -221,6 +225,7 @@ function modir_import_fetch_from_digikala($url) {
         return new WP_Error(
             'fetch_status',
             'دیجی‌کالا اطلاعات این محصول را نداد (کدهای API: ' . implode('، ', $attempts) . '). صفحه محصول هم خوانده نشد: ' . $page_info
+            . ($first_snippet ? ' [متن پاسخ دیجی‌کالا: ' . $first_snippet . ']' : '')
             . ' — بررسی کن لینک محصول هنوز در دیجی‌کالا باز می‌شود؛ اگر باز می‌شود، احتمالاً دیجی‌کالا دسترسی IP سرور شما را محدود کرده (معمولاً سرورهای خارج از ایران) و باید از هاست ایران یا پروکسی استفاده شود.'
         );
     }
