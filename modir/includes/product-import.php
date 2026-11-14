@@ -100,38 +100,59 @@ function modir_import_fetch_from_digikala($url) {
     }
     $product_id = $m[1];
 
-    $ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36';
+    $ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
-    $api_url  = 'https://api.digikala.com/v2/product/' . $product_id . '/';
-    $response = wp_remote_get($api_url, array(
-        'timeout'    => 25,
-        'user-agent' => $ua,
-        'headers'    => array('Accept' => 'application/json'),
-    ));
+    // دیجی‌کالا مستند رسمی ندارد و گاهی مسیر/محدودیت API را تغییر می‌دهد، پس
+    // چند آدرس با هدرهای شبیه مرورگر امتحان می‌شود و نتیجه هر کدام ثبت می‌شود.
+    $endpoints = array(
+        'https://api.digikala.com/v2/product/' . $product_id . '/',
+        'https://api.digikala.com/v2/product/' . $product_id,
+        'https://api.digikala.com/v1/product/' . $product_id . '/',
+    );
+    $headers = array(
+        'Accept'          => 'application/json, text/plain, */*',
+        'Accept-Language' => 'fa-IR,fa;q=0.9,en;q=0.8',
+        'Origin'          => 'https://www.digikala.com',
+        'Referer'         => 'https://www.digikala.com/product/dkp-' . $product_id . '/',
+        'x-web-optimize-response' => '1',
+    );
 
-    if (is_wp_error($response)) {
-        return new WP_Error('fetch_failed', 'اتصال به سرویس دیجی‌کالا ناموفق بود: ' . $response->get_error_message());
-    }
-
-    $code = wp_remote_retrieve_response_code($response);
-    $body = wp_remote_retrieve_body($response);
-
-    if ($code < 200 || $code >= 300 || !$body) {
-        $api_url  = 'https://api.digikala.com/v1/product/' . $product_id . '/';
+    $attempts = array();
+    $code     = 0;
+    $body     = '';
+    foreach ($endpoints as $api_url) {
         $response = wp_remote_get($api_url, array(
             'timeout'    => 25,
             'user-agent' => $ua,
-            'headers'    => array('Accept' => 'application/json'),
+            'headers'    => $headers,
         ));
         if (is_wp_error($response)) {
-            return new WP_Error('fetch_failed', 'اتصال به سرویس دیجی‌کالا ناموفق بود: ' . $response->get_error_message());
+            $attempts[] = 'خطای اتصال: ' . $response->get_error_message();
+            continue;
         }
-        $code = wp_remote_retrieve_response_code($response);
+        $code = (int) wp_remote_retrieve_response_code($response);
         $body = wp_remote_retrieve_body($response);
+        $attempts[] = $code;
+        if ($code >= 200 && $code < 300 && $body) {
+            break;
+        }
+        $body = '';
     }
 
-    if ($code < 200 || $code >= 300 || !$body) {
-        return new WP_Error('fetch_status', 'دیجی‌کالا پاسخ معتبری برنگرداند (کد ' . $code . '). ممکن است دسترسی سرور شما به دیجی‌کالا موقتاً محدود شده باشد.');
+    if (!$body) {
+        // راه دوم: خود صفحه محصول (داده‌های ساخت‌یافته Schema.org / Open Graph)
+        $page = modir_import_fetch_from_generic_site($url);
+        if (!is_wp_error($page) && (!empty($page['title']) || !empty($page['image']))) {
+            $page['source'] = 'digikala';
+            return $page;
+        }
+        $page_info = is_wp_error($page) ? $page->get_error_message() : 'اطلاعاتی در صفحه پیدا نشد';
+
+        return new WP_Error(
+            'fetch_status',
+            'دیجی‌کالا اطلاعات این محصول را نداد (کدهای API: ' . implode('، ', $attempts) . '). صفحه محصول هم خوانده نشد: ' . $page_info
+            . ' — بررسی کن لینک محصول هنوز در دیجی‌کالا باز می‌شود؛ اگر باز می‌شود، احتمالاً دیجی‌کالا دسترسی IP سرور شما را محدود کرده (معمولاً سرورهای خارج از ایران) و باید از هاست ایران یا پروکسی استفاده شود.'
+        );
     }
 
     $json = json_decode($body, true);
