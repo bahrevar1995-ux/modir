@@ -142,11 +142,20 @@ function modir_import_fetch_from_digikala($url) {
     if (!$body) {
         // راه دوم: خود صفحه محصول (داده‌های ساخت‌یافته Schema.org / Open Graph)
         $page = modir_import_fetch_from_generic_site($url);
-        if (!is_wp_error($page) && (!empty($page['title']) || !empty($page['image']))) {
+        // فقط وقتی پذیرفته می‌شود که واقعاً اطلاعات «همین محصول» باشد: هم عکس
+        // داشته باشد و هم عنوانش عنوان کلی سایت دیجی‌کالا (صفحه مسدودسازی/اصلی)
+        // نباشد؛ وگرنه محصول خراب و بی‌عکس ساخته می‌شود.
+        $page_ok = false;
+        if (!is_wp_error($page) && !empty($page['image']) && !empty($page['title'])) {
+            $generic = (false !== mb_stripos($page['title'], 'فروشگاه اینترنتی دیجی') && false === mb_stripos($page['title'], 'خرید'))
+                || trim($page['title']) === 'دیجی‌کالا';
+            $page_ok = !$generic;
+        }
+        if ($page_ok) {
             $page['source'] = 'digikala';
             return $page;
         }
-        $page_info = is_wp_error($page) ? $page->get_error_message() : 'اطلاعاتی در صفحه پیدا نشد';
+        $page_info = is_wp_error($page) ? $page->get_error_message() : 'صفحه‌ای که دریافت شد اطلاعات این محصول را نداشت (احتمالاً صفحه محدودیت دسترسی)';
 
         return new WP_Error(
             'fetch_status',
