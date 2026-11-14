@@ -176,6 +176,8 @@ function modir_import_fetch_from_digikala($url) {
         'Origin'          => 'https://www.digikala.com',
         'Referer'         => 'https://www.digikala.com/product/dkp-' . $product_id . '/',
         'x-web-optimize-response' => '1',
+        'x-web-client'    => 'desktop',
+        'x-web-client-id' => 'web',
     );
 
     $attempts      = array();
